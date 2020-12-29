@@ -1,4 +1,3 @@
-import * as mongoose from "mongoose";
 import Player, { IPlayer } from "@/models/Player";
 import { Service } from "typedi";
 

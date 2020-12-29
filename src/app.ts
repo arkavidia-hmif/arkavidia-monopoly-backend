@@ -13,6 +13,8 @@ import { mainLoader } from "@/loaders";
 import { Container } from "typedi";
 import { env } from "./env";
 import * as socketio from "socket.io";
+import * as path from "path";
+import { GameController } from "./controllers/websocket/GameController";
 
 useRoutingContainer(Container);
 useSocketContainer(Container);
@@ -30,11 +32,16 @@ mainLoader(app)
     });
     useSocketServer(io, {
       controllers: [__dirname + "/controllers/websocket/*.ts"],
-      useClassTransformer: false,
+      // useClassTransformer: false,
     });
 
-    app.listen(env.port, () => {
-      console.log(`Live on ${env.port}`);
+    // Socket test
+    app.use("/test", (req, res) => {
+      res.sendFile(path.resolve("./src/test.html"));
+    });
+
+    server.listen(env.port, () => {
+      console.log(`Live on port ${env.port}`);
     });
   })
   .catch((err) => {
