@@ -23,18 +23,18 @@ const app = express();
 const server = http.createServer(app);
 const io = new socketio.Server(server);
 
+useExpressServer(app, {
+  routePrefix: "/api",
+  controllers: [__dirname + "/controllers/api/*.ts"],
+  classTransformer: false,
+});
+
+useSocketServer(io, {
+  controllers: [__dirname + "/controllers/websocket/*.ts"],
+});
+
 mainLoader(app)
   .then(() => {
-    useExpressServer(app, {
-      routePrefix: "/api",
-      controllers: [__dirname + "/controllers/api/*.ts"],
-      classTransformer: false,
-    });
-    useSocketServer(io, {
-      controllers: [__dirname + "/controllers/websocket/*.ts"],
-      // useClassTransformer: false,
-    });
-
     // Socket test
     app.use("/test", (req, res) => {
       res.sendFile(path.resolve("./src/test.html"));
