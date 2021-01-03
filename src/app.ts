@@ -14,7 +14,6 @@ import { Container } from "typedi";
 import { env } from "./env";
 import * as socketio from "socket.io";
 import * as path from "path";
-import { GameController } from "./controllers/websocket/GameController";
 
 useRoutingContainer(Container);
 useSocketContainer(Container);

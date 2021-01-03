@@ -4,7 +4,7 @@ import { mongooseLoader } from "./mongooseLoader";
 import { morganLoader } from "./morganLoader";
 import { redocLoader } from "./redocLoader";
 
-export const mainLoader = async (expressApp: Express) => {
+export const mainLoader = async (expressApp: Express): Promise<void> => {
   try {
     // Define the loaders here...
     corsLoader(expressApp);

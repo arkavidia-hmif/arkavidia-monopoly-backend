@@ -119,8 +119,7 @@ export class PlayerController {
       },
     },
   })
-  public async deletePlayer(@Param("id") id: string) {
-    await this.playerService.delete(id);
-    return null;
+  public async deletePlayer(@Param("id") id: string): Promise<null> {
+    return await this.playerService.delete(id);
   }
 }

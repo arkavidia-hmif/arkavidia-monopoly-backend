@@ -3,23 +3,24 @@ import { Service } from "typedi";
 
 @Service()
 export class BoardService {
-  public async getAll() {
+  public async getAll(): Promise<IBoard[]> {
     return await Board.find({}).populate("tile");
   }
 
-  public async getOne(id: string) {
+  public async getOne(id: string): Promise<IBoard> {
     return await (await Board.findById(id)).populated("tile");
   }
 
-  public async create(data: Partial<IBoard>) {
+  public async create(data: Partial<IBoard>): Promise<IBoard> {
     return await new Board(data).save();
   }
 
-  public async delete(id: string) {
-    return await Board.findByIdAndDelete(id);
+  public async delete(id: string): Promise<null> {
+    await Board.findByIdAndDelete(id);
+    return null;
   }
 
-  public async appendTile(id: string, tileId: string) {
+  public async appendTile(id: string, tileId: string): Promise<IBoard> {
     const board = await Board.findById(id);
     board.tiles.push(tileId);
     return await board.save();

@@ -33,5 +33,15 @@ module.exports = {
         description: "Synchronize schema to database.",
       },
     },
+    lint: {
+      check: {
+        script: "eslint .",
+        description: "Run ESLint to check for code style inconsistency.",
+      },
+      fix: {
+        script: "eslint . --fix",
+        description: "Fix some fixable code inconsistency using ESLint.",
+      },
+    },
   },
 };

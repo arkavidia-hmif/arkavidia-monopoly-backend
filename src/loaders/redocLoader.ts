@@ -3,7 +3,7 @@ import { routingControllersToSpec } from "routing-controllers-openapi";
 import { validationMetadatasToSchemas } from "class-validator-jsonschema";
 import { Express } from "express";
 
-export const redocLoader = (expressApp: Express) => {
+export const redocLoader = (expressApp: Express): void => {
   const storage = getMetadataArgsStorage();
   const schemas = validationMetadatasToSchemas({
     refPointerPrefix: "#/components/schemas/",
