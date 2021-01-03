@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IPlayer extends Document {
   name: string;
@@ -12,7 +12,4 @@ const PlayerSchema = new Schema<IPlayer>({
   type: { type: String, enum: ["player", "spectator"] },
 });
 
-export default mongoose.model<IPlayer>(
-  "player",
-  PlayerSchema
-) as Model<IPlayer>;
+export default mongoose.model<IPlayer>("player", PlayerSchema);

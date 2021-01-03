@@ -14,7 +14,7 @@ export interface ITile extends Document {
   data?: string;
 }
 
-export const TileSchema = new Schema({
+export const TileSchema = new Schema<ITile>({
   type: { type: TileType, required: true },
   data: { type: String },
 });

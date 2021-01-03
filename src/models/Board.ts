@@ -2,10 +2,10 @@ import mongoose, { Document, Schema } from "mongoose";
 import { ITile } from "./Tile";
 
 export interface IBoard extends Document {
-  tile: ITile;
+  tile: ITile[];
 }
 
-export const BoardSchema = new Schema({
+export const BoardSchema = new Schema<IBoard>({
   tiles: [{ type: Schema.Types.ObjectId, ref: "tile" }],
 });
 

@@ -1,4 +1,3 @@
-import { IPlayer } from "@/models/Player";
 import { PlayerService } from "@/services/PlayerService";
 import { IsNumber, IsString } from "class-validator";
 import {
