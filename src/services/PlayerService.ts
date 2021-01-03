@@ -8,7 +8,7 @@ export class PlayerService {
   }
 
   public async getOne(id: string) {
-    return await Player.findOne({ _id: id });
+    return await Player.findById(id);
   }
 
   public async create(data: Partial<IPlayer>) {
@@ -16,10 +16,10 @@ export class PlayerService {
   }
 
   public async delete(id: string) {
-    return await Player.deleteOne({ _id: id });
+    return await Player.findByIdAndDelete(id);
   }
 
   public async update(id: string, data: Partial<IPlayer>) {
-    return await Player.findOneAndUpdate({ _id: id }, data, { new: true });
+    return await Player.findByIdAndUpdate(id, data, { new: true });
   }
 }

@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 import { ITile } from "./Tile";
 
 export interface IBoard extends Document {
-  tile: ITile[];
+  tiles: string[];
 }
 
 export const BoardSchema = new Schema<IBoard>({
