@@ -8,16 +8,16 @@ export const mainLoader = async (expressApp: Express): Promise<void> => {
   try {
     // Define the loaders here...
     corsLoader(expressApp);
-    console.info("CORS initialized");
+    console.info("🌵 CORS initialized");
 
     await mongooseLoader();
-    console.info("Mongoose connected to MongoDB");
+    console.info("🌵 Mongoose connected to MongoDB");
 
     morganLoader(expressApp);
-    console.info("Morgan logger initialized");
+    console.info("🌵 Morgan logger initialized");
 
     redocLoader(expressApp);
-    console.info("Redoc documentation initialized");
+    console.info("🌵 Redoc documentation initialized");
   } catch (err) {
     throw err;
   }

@@ -10,7 +10,7 @@ import {
   Post,
   Put,
 } from "routing-controllers";
-import { OpenAPI } from "routing-controllers-openapi";
+import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 
 export class ProblemBase {
   @IsString()
@@ -50,39 +50,93 @@ export class ProblemController {
   constructor(private problemService: ProblemService) {}
 
   @Get("/")
+  @ResponseSchema(ProblemResponse, { isArray: true })
+  @OpenAPI({
+    description: "Get all problems.",
+    responses: {
+      "200": {
+        description: "OK",
+      },
+    },
+  })
   public async getAllProblems(): Promise<ProblemResponse[]> {
     return await this.problemService.getAll();
   }
 
+  @Get("/random")
+  @ResponseSchema(ProblemResponse)
+  @OpenAPI({
+    description: "Get random problem.",
+    responses: {
+      "200": {
+        description: "OK",
+      },
+    },
+  })
+  public async getRandomProblem(): Promise<ProblemResponse> {
+    return await this.problemService.getRandom();
+  }
+
   @Get("/:id")
+  @ResponseSchema(ProblemResponse)
+  @OpenAPI({
+    description: "Get problem by ID.",
+    responses: {
+      "200": {
+        description: "OK",
+      },
+    },
+  })
   public async getProblemById(
     @Param("id") id: string
   ): Promise<ProblemResponse> {
     return await this.problemService.getOne(id);
   }
 
-  @Get("/random")
-  public async getRandomProblem(): Promise<ProblemResponse> {
-    return await this.problemService.getRandom();
-  }
-
   @Post("/")
+  @ResponseSchema(ProblemResponse)
+  @OpenAPI({
+    description: "Create new problem.",
+    responses: {
+      "200": {
+        description: "OK",
+      },
+    },
+  })
   public async createProblem(
-    @Body() data: Partial<ProblemResponse>
+    @Body() data: CreateProblemBody
   ): Promise<ProblemResponse> {
     return await this.problemService.create(data);
   }
 
   @Delete("/:id")
+  @ResponseSchema(null)
+  @OpenAPI({
+    description: "Delete problem by ID.",
+    responses: {
+      "200": {
+        description: "OK",
+      },
+    },
+  })
   public async deleteProblem(@Param("id") id: string): Promise<null> {
     await Problem.findByIdAndDelete(id);
     return null;
   }
 
   @Put("/:id")
+  @ResponseSchema(ProblemResponse)
+  @OpenAPI({
+    description: "Update problem by ID, allows partial update.",
+    responses: {
+      "200": {
+        description: "OK",
+      },
+    },
+  })
   public async updateProblem(
     @Param("id") id: string,
-    @Body() data: Partial<ProblemResponse>
+    @Body() data: UpdateProblemBody
   ): Promise<ProblemResponse> {
     return await this.problemService.update(id, data);
   }
