@@ -79,7 +79,7 @@ export class PlayerController {
   @Post("/")
   @ResponseSchema(PlayerResponse)
   @OpenAPI({
-    description: "Create new player",
+    description: "Create new player.",
     responses: {
       "200": {
         description: "OK",
@@ -95,7 +95,7 @@ export class PlayerController {
   @Put("/:id")
   @ResponseSchema(PlayerResponse)
   @OpenAPI({
-    description: "Update player by ID",
+    description: "Update player by ID, allows partial update.",
     responses: {
       "200": {
         description: "OK",
