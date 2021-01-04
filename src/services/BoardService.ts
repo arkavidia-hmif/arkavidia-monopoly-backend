@@ -25,4 +25,10 @@ export class BoardService {
     board.tiles.push(tileId);
     return await board.save();
   }
+
+  public async appendTiles(id: string, tileIds: string[]): Promise<IBoard> {
+    const board = await Board.findById(id);
+    board.tiles = board.tiles.concat(tileIds);
+    return await board.save();
+  }
 }
