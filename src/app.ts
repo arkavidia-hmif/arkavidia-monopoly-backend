@@ -40,7 +40,7 @@ mainLoader(app)
     });
 
     server.listen(env.port, () => {
-      console.log(`Live on port ${env.port}`);
+      console.log(`⭐ Live on port ${env.port}`);
     });
   })
   .catch((err) => {
