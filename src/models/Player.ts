@@ -9,7 +9,7 @@ export interface IPlayer extends Document {
 const PlayerSchema = new Schema<IPlayer>({
   name: { type: String, required: true },
   color: { type: String, required: true },
-  type: { type: String, enum: ["player", "spectator"] },
+  type: { type: String, enum: ["player", "spectator"], required: true },
 });
 
 export default mongoose.model<IPlayer>("player", PlayerSchema);
