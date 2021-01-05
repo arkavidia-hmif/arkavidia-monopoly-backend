@@ -11,11 +11,13 @@ export enum TileType {
 
 export interface ITile extends Document {
   type: TileType;
+  problemId?: string;
   data?: string;
 }
 
 export const TileSchema = new Schema<ITile>({
   type: { type: TileType, required: true },
+  problemId: { type: Schema.Types.ObjectId, ref: "problem" },
   data: { type: String },
 });
 
