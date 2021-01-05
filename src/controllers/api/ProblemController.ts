@@ -14,10 +14,10 @@ import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 
 export class ProblemBase {
   @IsString()
-  public statement: string;
+  public statement?: string;
 
   @IsNumber()
-  public answer: number;
+  public answer?: number;
 }
 
 export class CreateProblemBody extends ProblemBase {
@@ -30,10 +30,10 @@ export class CreateProblemBody extends ProblemBase {
 
 export class UpdateProblemBody extends ProblemBase {
   @IsString()
-  public statement: string;
+  public statement?: string;
 
   @IsNumber()
-  public answer: number;
+  public answer?: number;
 }
 
 export class ProblemResponse extends ProblemBase {

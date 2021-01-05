@@ -13,10 +13,10 @@ import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 
 export class PlayerBase {
   @IsString()
-  public name: string;
+  public name?: string;
 
   @IsString()
-  public color: string;
+  public color?: string;
 }
 
 export class CreatePlayerBody extends PlayerBase {
@@ -29,10 +29,10 @@ export class CreatePlayerBody extends PlayerBase {
 
 export class UpdatePlayerBody extends PlayerBase {
   @IsString()
-  public name: string;
+  public name?: string;
 
   @IsString()
-  public color: string;
+  public color?: string;
 }
 
 export class PlayerResponse extends PlayerBase {
