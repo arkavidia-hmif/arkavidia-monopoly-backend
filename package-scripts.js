@@ -35,11 +35,11 @@ module.exports = {
     },
     lint: {
       check: {
-        script: "eslint .",
+        script: "eslint --max-warnings 0 --ext .ts .",
         description: "Run ESLint to check for code style inconsistency.",
       },
       fix: {
-        script: "eslint . --fix",
+        script: "eslint --ext .ts . --fix",
         description: "Fix some fixable code inconsistency using ESLint.",
       },
     },
