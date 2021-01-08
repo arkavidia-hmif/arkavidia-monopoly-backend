@@ -6,25 +6,29 @@ import {
   OnMessage,
   SocketController,
 } from "socket-controllers";
+import { Socket } from "socket.io";
 
 @SocketController("/game")
 export class GameController {
   @OnConnect()
-  connection(@ConnectedSocket() socket: any) {
-    console.log("client connected");
+  public async connection(): Promise<void> {
+    console.log("Client connected");
   }
 
   @OnDisconnect()
-  disconnect(@ConnectedSocket() socket: any) {
-    console.log("client disconnected");
+  public async disconnect(): Promise<void> {
+    console.log("Client disconnected");
   }
 
-  @OnMessage("save")
-  save(@ConnectedSocket() socket: any) {
+  @OnMessage("start")
+  public async startGame(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() message: string
+  ): Promise<void> {
     console.log("received");
-    // console.log("received message:", message);
+    console.log("received message:", message);
     // console.log("setting id to the message and sending it back to the client");
     // message.id = 1;
-    // socket.emit("message_saved", message);
+    // socket.emit("game_started", message);
   }
 }

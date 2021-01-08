@@ -43,5 +43,9 @@ module.exports = {
         description: "Fix some fixable code inconsistency using ESLint.",
       },
     },
+    test: {
+      script: "jest",
+      description: "Run unit test on the API.",
+    },
   },
 };
