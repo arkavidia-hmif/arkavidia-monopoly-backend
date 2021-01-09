@@ -18,9 +18,9 @@ import * as path from "path";
 useRoutingContainer(Container);
 useSocketContainer(Container);
 
-const app = express();
-const server = http.createServer(app);
-const io = new socketio.Server(server);
+export const app = express();
+export const server = http.createServer(app);
+export const io = new socketio.Server(server);
 
 useExpressServer(app, {
   routePrefix: "/api",
@@ -32,19 +32,22 @@ useSocketServer(io, {
   controllers: [__dirname + "/controllers/websocket/*.ts"],
 });
 
-mainLoader(app)
-  .then(() => {
-    // Socket test
-    app.use("/test", (req, res) => {
-      res.sendFile(path.resolve("./src/test.html"));
-    });
+export const start = async (): Promise<void> => {
+  return await mainLoader(app)
+    .then(async () => {
+      // Socket test
+      app.use("/test", (req, res) => {
+        res.sendFile(path.resolve("./src/test.html"));
+      });
 
-    server.listen(env.port, () => {
-      console.log(`⭐ Live on port ${env.port}`);
+      return await new Promise<void>((resolve) => {
+        server.listen(env.port, () => {
+          console.info(`⭐ Live on port ${env.port}`);
+          resolve();
+        });
+      });
+    })
+    .catch((err) => {
+      console.log(err.message);
     });
-  })
-  .catch((err) => {
-    console.log(err.message);
-  });
-
-export { app, server, io };
+};

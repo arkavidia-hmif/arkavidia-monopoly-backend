@@ -1,25 +1,21 @@
-import { env } from "@/env";
-import { io as ioServer, server } from "@/app";
+// import { env } from "@/env";
+import { io as ioServer, server as httpServer, start } from "@/app";
 import { io, Socket } from "socket.io-client";
 
 let socket: Socket;
 
-// beforeAll(async (done) => {
-//   await setup({
-//     command: "yarn test-server",
-//     debug: true,
-//     port: env.port,
-//     host: env.api.url,
-//   });
-//   done();
-// });
+beforeAll(async (done) => {
+  await start();
+  console.log(`🌵 🌵 🌵 1`);
+  done();
+});
 
 beforeEach((done) => {
   jest.setTimeout(10000);
-  console.log(`${env.api.url}:${env.port}/game`);
-  socket = io(`${env.api.url}:${env.port}/game`);
+  console.log(`🌵 🌵 🌵 2`);
+  socket = io(`http://localhost:3000/game/`);
   socket.on("connect", () => {
-    console.log("asdasdasdasd");
+    console.info("asdasdasdasd");
     done();
   });
 });
@@ -33,7 +29,7 @@ afterEach((done) => {
 
 afterAll((done) => {
   ioServer.close();
-  server.close();
+  httpServer.close();
   done();
 });
 

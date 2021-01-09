@@ -2,17 +2,17 @@ module.exports = {
   scripts: {
     default: {
       script:
-        "cross-env NODE_ENV=production ts-node-transpile-only -r tsconfig-paths/register src/app.ts",
+        "cross-env NODE_ENV=production ts-node-transpile-only -r tsconfig-paths/register src/index.ts",
       description: "Run the API in production mode.",
     },
     dev: {
       script:
-        "nodemon --exec ts-node-transpile-only -r tsconfig-paths/register src/app.ts",
+        "nodemon --exec ts-node-transpile-only -r tsconfig-paths/register src/index.ts",
       description: "Run the API in development mode.",
     },
     "test-server": {
       script:
-        "cross-env NODE_ENV=test nodemon --exec ts-node-transpile-only -r tsconfig-paths/register src/app.ts",
+        "cross-env NODE_ENV=test nodemon --exec ts-node-transpile-only -r tsconfig-paths/register src/index.ts",
       description: "Run the API in test mode.",
     },
     seed: {

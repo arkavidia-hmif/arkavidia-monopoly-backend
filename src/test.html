@@ -12,9 +12,13 @@
     <script>
       const socket = io("http://localhost:3000/game/");
 
+      socket.on('connect', () => {
+        alert(1);
+      })
+
       function sendMsg() {
         console.log('sdsdssd');
-        socket.emit("start");
+        socket.emit("start", "asdasdasds");
       }
     </script>
   </body>
