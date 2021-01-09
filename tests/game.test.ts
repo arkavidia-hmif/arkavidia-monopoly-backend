@@ -1,5 +1,6 @@
 // import { env } from "@/env";
 import { io as ioServer, server as httpServer, start } from "@/app";
+import { env } from "@/env";
 import { io, Socket } from "socket.io-client";
 
 let socket: Socket;
@@ -13,9 +14,8 @@ beforeAll(async (done) => {
 beforeEach((done) => {
   jest.setTimeout(10000);
   console.log(`🌵 🌵 🌵 2`);
-  socket = io(`http://localhost:3000/game/`);
+  socket = io(`http://localhost:${env.port}/`);
   socket.on("connect", () => {
-    console.info("asdasdasdasd");
     done();
   });
 });
