@@ -10,6 +10,11 @@ module.exports = {
         "nodemon --exec ts-node-transpile-only -r tsconfig-paths/register src/app.ts",
       description: "Run the API in development mode.",
     },
+    "test-server": {
+      script:
+        "cross-env NODE_ENV=test nodemon --exec ts-node-transpile-only -r tsconfig-paths/register src/app.ts",
+      description: "Run the API in test mode.",
+    },
     seed: {
       config: {
         script:

@@ -15,40 +15,36 @@ import { env } from "./env";
 import * as socketio from "socket.io";
 import * as path from "path";
 
-const runServer = (): void => {
-  useRoutingContainer(Container);
-  useSocketContainer(Container);
+useRoutingContainer(Container);
+useSocketContainer(Container);
 
-  const app = express();
-  const server = http.createServer(app);
-  const io = new socketio.Server(server);
+const app = express();
+const server = http.createServer(app);
+const io = new socketio.Server(server);
 
-  useExpressServer(app, {
-    routePrefix: "/api",
-    controllers: [__dirname + "/controllers/api/*.ts"],
-    classTransformer: false,
-  });
+useExpressServer(app, {
+  routePrefix: "/api",
+  controllers: [__dirname + "/controllers/api/*.ts"],
+  classTransformer: false,
+});
 
-  useSocketServer(io, {
-    controllers: [__dirname + "/controllers/websocket/*.ts"],
-  });
+useSocketServer(io, {
+  controllers: [__dirname + "/controllers/websocket/*.ts"],
+});
 
-  mainLoader(app)
-    .then(() => {
-      // Socket test
-      app.use("/test", (req, res) => {
-        res.sendFile(path.resolve("./src/test.html"));
-      });
-
-      server.listen(env.port, () => {
-        console.log(`⭐ Live on port ${env.port}`);
-      });
-    })
-    .catch((err) => {
-      console.log(err.message);
+mainLoader(app)
+  .then(() => {
+    // Socket test
+    app.use("/test", (req, res) => {
+      res.sendFile(path.resolve("./src/test.html"));
     });
-};
 
-runServer();
+    server.listen(env.port, () => {
+      console.log(`⭐ Live on port ${env.port}`);
+    });
+  })
+  .catch((err) => {
+    console.log(err.message);
+  });
 
-export default runServer;
+export { app, server, io };

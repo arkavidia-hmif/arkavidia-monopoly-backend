@@ -12,12 +12,12 @@ import { Socket } from "socket.io";
 export class GameController {
   @OnConnect()
   public async connection(): Promise<void> {
-    console.log("Client connected");
+    console.info("Client connected");
   }
 
   @OnDisconnect()
   public async disconnect(): Promise<void> {
-    console.log("Client disconnected");
+    console.info("Client disconnected");
   }
 
   @OnMessage("start")
@@ -25,9 +25,10 @@ export class GameController {
     @ConnectedSocket() socket: Socket,
     @MessageBody() message: string
   ): Promise<void> {
-    console.log("received");
-    console.log("received message:", message);
-    // console.log("setting id to the message and sending it back to the client");
+    console.info("received");
+    console.info("received message:", message);
+    socket.emit("lala", message);
+    // console.info("setting id to the message and sending it back to the client");
     // message.id = 1;
     // socket.emit("game_started", message);
   }
