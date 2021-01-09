@@ -1,18 +1,20 @@
 import {
-  ConnectedSocket,
+  // ConnectedSocket,
+  EmitOnSuccess,
   MessageBody,
   OnConnect,
   OnDisconnect,
   OnMessage,
   SocketController,
 } from "socket-controllers";
-import { Socket } from "socket.io";
+// import { Socket } from "socket.io";
 
-@SocketController("/game")
+@SocketController()
 export class GameController {
   @OnConnect()
   public async connection(): Promise<void> {
     console.info("Client connected");
+    // socket.emit("lobby");
   }
 
   @OnDisconnect()
@@ -21,13 +23,11 @@ export class GameController {
   }
 
   @OnMessage("start")
-  public async startGame(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() message: string
-  ): Promise<void> {
-    console.info("received");
+  @EmitOnSuccess("lala")
+  public async startGame(@MessageBody() message: string): Promise<string> {
     console.info("received message:", message);
-    socket.emit("lala", message);
+    return message.repeat(23);
+    // io.emit("lala", message);
     // console.info("setting id to the message and sending it back to the client");
     // message.id = 1;
     // socket.emit("game_started", message);

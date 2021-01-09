@@ -49,7 +49,8 @@ module.exports = {
       },
     },
     test: {
-      script: "jest",
+      script:
+        "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.test.ts'",
       description: "Run unit test on the API.",
     },
   },

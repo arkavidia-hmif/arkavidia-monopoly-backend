@@ -7,15 +7,15 @@ let socket: Socket;
 
 beforeAll(async (done) => {
   await start();
-  console.log(`🌵 🌵 🌵 1`);
   done();
 });
 
 beforeEach((done) => {
-  jest.setTimeout(10000);
-  console.log(`🌵 🌵 🌵 2`);
+  console.log(httpServer.address());
+  // console.log(`http://${httpServer.address().address}:${env.port}/`);
   socket = io(`http://localhost:${env.port}/`);
   socket.on("connect", () => {
+    console.log("connected");
     done();
   });
 });
@@ -34,12 +34,21 @@ afterAll((done) => {
 });
 
 describe("Basic socket.io emit example", () => {
-  test("Should communicate", (done) => {
-    // socket.once("start", (message) => {
-    //   expect(message).toBe("lala");
-    //   done();
-    // });
-    expect(4).toBe(4);
+  test("Communicate #1", (done) => {
+    // socket.once("lobby", () => {
     done();
-  }, 20000);
+    // });
+  });
+  test("Should communicate", (done) => {
+    const sentMessage = "suatu pesan";
+
+    socket.on("lala", (message) => {
+      expect(message).toBe(sentMessage);
+      done();
+    });
+    socket.emit("start", sentMessage);
+    // setTimeout(() => {}, 500);
+    // expect(4).toBe(4);
+    // done();
+  });
 });
