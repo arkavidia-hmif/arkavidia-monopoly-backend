@@ -26,7 +26,7 @@ export class GameController {
   @EmitOnSuccess("lala")
   public async startGame(@MessageBody() message: string): Promise<string> {
     console.info("received message:", message);
-    return message.repeat(23);
+    return message;
     // io.emit("lala", message);
     // console.info("setting id to the message and sending it back to the client");
     // message.id = 1;

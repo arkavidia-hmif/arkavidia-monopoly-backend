@@ -49,8 +49,7 @@ module.exports = {
       },
     },
     test: {
-      script:
-        "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'tests/**/*.test.ts'",
+      script: "ts-mocha --paths tests/**/*.ts",
       description: "Run unit test on the API.",
     },
   },

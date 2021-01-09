@@ -2,17 +2,17 @@
 import { io as ioServer, server as httpServer, start } from "@/app";
 import { env } from "@/env";
 import { io, Socket } from "socket.io-client";
+import { before, beforeEach, after, afterEach, it } from "mocha";
+import { expect } from "chai";
 
 let socket: Socket;
 
-beforeAll(async (done) => {
-  await start();
-  done();
+before(() => {
+  return start();
 });
 
 beforeEach((done) => {
   console.log(httpServer.address());
-  // console.log(`http://${httpServer.address().address}:${env.port}/`);
   socket = io(`http://localhost:${env.port}/`);
   socket.on("connect", () => {
     console.log("connected");
@@ -27,26 +27,26 @@ afterEach((done) => {
   done();
 });
 
-afterAll((done) => {
+after((done) => {
   ioServer.close();
   httpServer.close();
   done();
 });
 
 describe("Basic socket.io emit example", () => {
-  test("Communicate #1", (done) => {
-    // socket.once("lobby", () => {
-    done();
-    // });
-  });
-  test("Should communicate", (done) => {
+  // test("Communicate #1", (done) => {
+  //   // socket.once("lobby", () => {
+  //   done();
+  //   // });
+  // });
+  it("Should communicate", (done) => {
     const sentMessage = "suatu pesan";
 
+    socket.emit("start", sentMessage);
     socket.on("lala", (message) => {
-      expect(message).toBe(sentMessage);
+      expect(message).to.be.equal(sentMessage);
       done();
     });
-    socket.emit("start", sentMessage);
     // setTimeout(() => {}, 500);
     // expect(4).toBe(4);
     // done();
