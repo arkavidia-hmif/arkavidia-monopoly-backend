@@ -33,22 +33,18 @@ useSocketServer(io, {
 });
 
 export const start = async (): Promise<void> => {
-  try {
-    await mainLoader(app);
+  await mainLoader(app);
 
-    app.use("/test", (req, res) => {
-      res.sendFile(path.resolve("./src/test.html"));
+  app.use("/test", (req, res) => {
+    res.sendFile(path.resolve("./src/test.html"));
+  });
+
+  const serverPromise = new Promise<void>((resolve) => {
+    server.listen(env.port, () => {
+      resolve();
     });
+  });
 
-    const serverPromise = new Promise<void>((resolve) => {
-      server.listen(env.port, () => {
-        resolve();
-      });
-    });
-
-    await serverPromise;
-    console.info(`⭐ Live on port ${env.port}`);
-  } catch (error) {
-    console.error(error);
-  }
+  await serverPromise;
+  console.info(`⭐ Live on port ${env.port}`);
 };
