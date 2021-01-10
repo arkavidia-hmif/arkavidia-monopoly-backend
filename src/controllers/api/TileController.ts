@@ -18,8 +18,11 @@ export class TileBase {
   @IsString()
   problemId?: string;
 
-  @IsJSON()
-  data?: string;
+  @IsNumber()
+  price?: number;
+
+  @IsNumber()
+  multiplier?: number;
 }
 
 export class CreateTileBody extends TileBase {
@@ -29,8 +32,11 @@ export class CreateTileBody extends TileBase {
   @IsString()
   problemId?: string;
 
-  @IsJSON()
-  data?: string;
+  @IsNumber()
+  price?: number;
+
+  @IsNumber()
+  multiplier?: number;
 }
 
 export class UpdateTileBody extends TileBase {
@@ -40,8 +46,11 @@ export class UpdateTileBody extends TileBase {
   @IsString()
   problemId?: string;
 
-  @IsJSON()
-  data?: string;
+  @IsNumber()
+  price?: number;
+
+  @IsNumber()
+  multiplier?: number;
 }
 
 export class TileResponse extends TileBase {

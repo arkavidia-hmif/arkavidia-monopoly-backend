@@ -12,7 +12,7 @@ export class BoardService {
   }
 
   public async create(data: Partial<IBoard>): Promise<IBoard> {
-    return await new Board(data).save();
+    return await (await new Board(data).save()).populated("tile");
   }
 
   public async delete(id: string): Promise<null> {
@@ -23,12 +23,12 @@ export class BoardService {
   public async appendTile(id: string, tileId: string): Promise<IBoard> {
     const board = await Board.findById(id);
     board.tiles.push(tileId);
-    return await board.save();
+    return await (await board.save()).populated("tile");
   }
 
   public async appendTiles(id: string, tileIds: string[]): Promise<IBoard> {
     const board = await Board.findById(id);
     board.tiles = board.tiles.concat(tileIds);
-    return await board.save();
+    return await (await board.save()).populated("tile");
   }
 }
