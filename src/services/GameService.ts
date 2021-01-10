@@ -12,13 +12,10 @@ export class GameService {
   private board: IBoard;
   private turn = 0;
 
-  public async initializeBoard(
-    pawnList: Pawn[],
-    boardId: string
-  ): Promise<void> {
-    this.pawnList = [...pawnList];
-    this.board = await Container.get(BoardService).getOne(boardId);
-  }
+  // public async initializeGame(boardId: string): Promise<void> {
+  //   this.pawnList = [];
+  //   this.board = await Container.get(BoardService).getOne(boardId);
+  // }
 
   public getPawnList(): Pawn[] {
     return this.pawnList;
@@ -41,20 +38,29 @@ export class GameService {
       (this.pawnList[this.turn].position + value) % this.board.tiles.length;
   }
 
+  public addPawn(playerId: string): void {
+    this.pawnList.push({ playerId, position: 0 });
+  }
+
   public async tileAction(): Promise<void> {
     const currentTile: ITile = await Container.get(TileService).getOne(
       this.board.tiles[this.pawnList[this.turn].position]
     );
     switch (currentTile.type) {
       case TileType.START:
+        return;
       // cash money?
       case TileType.JAIL:
+        return;
       // no turn
       case TileType.PARKING:
+        return;
       // select tile
       case TileType.PROPERTY:
+        return;
       // beli2?
       case TileType.POWER_UP:
+        return;
       // get random powerup
     }
   }

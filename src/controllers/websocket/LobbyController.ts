@@ -1,3 +1,5 @@
+import { Pawn } from "@/models/Game";
+import { GameService } from "@/services/GameService";
 import {
   // ConnectedSocket,
   EmitOnSuccess,
@@ -7,14 +9,14 @@ import {
   OnMessage,
   SocketController,
 } from "socket-controllers";
-// import { Socket } from "socket.io";
 
 @SocketController()
-export class GameController {
+export class LobbyController {
+  constructor(private gameService: GameService) {}
+
   @OnConnect()
   public async connection(): Promise<void> {
     console.info("Client connected");
-    // socket.emit("lobby");
   }
 
   @OnDisconnect()
@@ -23,13 +25,14 @@ export class GameController {
   }
 
   @OnMessage("start")
-  @EmitOnSuccess("lala")
   public async startGame(@MessageBody() message: string): Promise<string> {
-    console.info("received message:", message);
     return message;
-    // io.emit("lala", message);
-    // console.info("setting id to the message and sending it back to the client");
-    // message.id = 1;
-    // socket.emit("game_started", message);
+  }
+
+  @OnMessage("LOBBY_addPlayer")
+  @EmitOnSuccess("LOBBY_playersInLobby")
+  public async addPlayer(@MessageBody() playerId: string): Promise<Pawn[]> {
+    this.gameService.addPawn(playerId);
+    return this.gameService.getPawnList();
   }
 }
