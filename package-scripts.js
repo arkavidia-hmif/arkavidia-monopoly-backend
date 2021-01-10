@@ -10,34 +10,6 @@ module.exports = {
         "nodemon --exec ts-node-transpile-only -r tsconfig-paths/register src/index.ts",
       description: "Run the API in development mode.",
     },
-    "test-server": {
-      script:
-        "cross-env NODE_ENV=test nodemon --exec ts-node-transpile-only -r tsconfig-paths/register src/index.ts",
-      description: "Run the API in test mode.",
-    },
-    seed: {
-      config: {
-        script:
-          "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js config",
-        description: "Check TypeORM config for seeding.",
-      },
-      run: {
-        script:
-          "ts-node -r tsconfig-paths/register  ./node_modules/typeorm-seeding/dist/cli.js seed",
-        description:
-          "Seed the database with predefined data from the seeds directory listed in the ORM config.",
-      },
-    },
-    schema: {
-      drop: {
-        script: "ts-node ./node_modules/typeorm/cli.js schema:drop",
-        description: "Drop schema from database.",
-      },
-      sync: {
-        script: "ts-node ./node_modules/typeorm/cli.js schema:sync",
-        description: "Synchronize schema to database.",
-      },
-    },
     lint: {
       check: {
         script: "eslint --max-warnings 0 --ext .ts .",
