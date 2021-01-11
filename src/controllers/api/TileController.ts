@@ -8,7 +8,7 @@ import {
   Put,
 } from "routing-controllers";
 import { TileService } from "@/services/TileService";
-import { IsEnum, IsJSON, IsNumber, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsString } from "class-validator";
 import { TileType } from "@/models/Tile";
 
 export class TileBase {
