@@ -44,7 +44,7 @@ export class GameService {
 
   public async tileAction(): Promise<void> {
     const currentTile: ITile = await Container.get(TileService).getOne(
-      this.board.tiles[this.pawnList[this.turn].position]
+      this.board.tiles[this.pawnList[this.turn].position] as string
     );
     switch (currentTile.type) {
       case TileType.START:
