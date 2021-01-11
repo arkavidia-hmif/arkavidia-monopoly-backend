@@ -14,13 +14,11 @@ export const redocLoader = (expressApp: Express): void => {
     { components: { schemas } }
   );
 
-  console.log(schemas);
-
   const redocPage = `
   <!DOCTYPE html>
   <html>
     <head>
-      <title>Hans-Bot Documentation</title>
+      <title>Arkavidia Monopoly Documentation</title>
       <!-- needed for adaptive design -->
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1">

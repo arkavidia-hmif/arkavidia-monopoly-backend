@@ -13,10 +13,10 @@ import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
 
 export class PlayerBase {
   @IsString()
-  public name: string;
+  public name?: string;
 
   @IsString()
-  public color: string;
+  public color?: string;
 }
 
 export class CreatePlayerBody extends PlayerBase {
@@ -29,10 +29,10 @@ export class CreatePlayerBody extends PlayerBase {
 
 export class UpdatePlayerBody extends PlayerBase {
   @IsString()
-  public name: string;
+  public name?: string;
 
   @IsString()
-  public color: string;
+  public color?: string;
 }
 
 export class PlayerResponse extends PlayerBase {
@@ -51,7 +51,7 @@ export class PlayerController {
   @Get("/")
   @ResponseSchema(PlayerResponse, { isArray: true })
   @OpenAPI({
-    description: "Get all players",
+    description: "Get all players.",
     responses: {
       "200": {
         description: "OK",
@@ -65,7 +65,7 @@ export class PlayerController {
   @Get("/:id")
   @ResponseSchema(PlayerResponse)
   @OpenAPI({
-    description: "Get player by ID",
+    description: "Get player by ID.",
     responses: {
       "200": {
         description: "OK",
@@ -79,7 +79,7 @@ export class PlayerController {
   @Post("/")
   @ResponseSchema(PlayerResponse)
   @OpenAPI({
-    description: "Create new player",
+    description: "Create new player.",
     responses: {
       "200": {
         description: "OK",
@@ -95,7 +95,7 @@ export class PlayerController {
   @Put("/:id")
   @ResponseSchema(PlayerResponse)
   @OpenAPI({
-    description: "Update player by ID",
+    description: "Update player by ID, allows partial update.",
     responses: {
       "200": {
         description: "OK",

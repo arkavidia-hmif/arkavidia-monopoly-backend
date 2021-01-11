@@ -11,12 +11,16 @@ export enum TileType {
 
 export interface ITile extends Document {
   type: TileType;
-  data?: string;
+  problemId?: string;
+  price?: number;
+  multiplier?: number;
 }
 
 export const TileSchema = new Schema<ITile>({
   type: { type: TileType, required: true },
-  data: { type: String },
+  problemId: { type: Schema.Types.ObjectId, ref: "problem" },
+  price: { type: Number },
+  multiplier: { type: Number },
 });
 
 export default mongoose.model<ITile>("tile", TileSchema);

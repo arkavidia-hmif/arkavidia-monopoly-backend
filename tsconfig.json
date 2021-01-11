@@ -23,7 +23,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     },
     "lib": [
       "es5",
@@ -39,6 +39,7 @@
       "es2015.symbol",
       "es2015.symbol.wellknown",
       "esnext.asynciterable"
-    ]
+    ],
+    "types": ["node"]
   }
 }

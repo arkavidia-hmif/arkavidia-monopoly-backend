@@ -9,9 +9,12 @@ dotenv.config({
 });
 
 export const env = {
-  port: process.env.PORT,
+  port: parseInt(process.env.PORT),
   db: {
     host: process.env.DB_HOST,
     name: process.env.DB_NAME,
+  },
+  api: {
+    url: process.env.API_URL,
   },
 };
