@@ -18,7 +18,7 @@ after((done) => {
   done();
 });
 
-describe("Lobby test", () => {
+describe("Player join", () => {
   // Initialize first player
   before((done) => {
     sockets[0] = io(`http://localhost:${env.port}/`);
@@ -26,6 +26,7 @@ describe("Lobby test", () => {
       done();
     });
   });
+
   // Initialize second player
   before((done) => {
     sockets[1] = io(`http://localhost:${env.port}/`);
@@ -48,6 +49,49 @@ describe("Lobby test", () => {
     sockets[1].emit("LOBBY_addPlayer", "id2");
     sockets[1].on("LOBBY_playersInLobby", (pawns: Pawn[]) => {
       expect(pawns.length).to.be.equal(2);
+      done();
+    });
+  });
+
+  // Terminate first player connection
+  after((done) => {
+    if (sockets[0].connected) {
+      sockets[0].disconnect();
+    }
+    done();
+  });
+
+  // Terminate second player connection
+  after((done) => {
+    if (sockets[1].connected) {
+      sockets[1].disconnect();
+    }
+    done();
+  });
+});
+
+describe("Start Game", () => {
+  // Initialize first player
+  before((done) => {
+    sockets[0] = io(`http://localhost:${env.port}/`);
+    sockets[0].on("connect", () => {
+      done();
+    });
+  });
+
+  // Simulate player joining lobby
+  it("Player join", (done) => {
+    sockets[0].emit("LOBBY_addPlayer", "id1");
+    sockets[0].on("LOBBY_playersInLobby", (pawns: Pawn[]) => {
+      expect(pawns.length).to.be.equal(1);
+      done();
+    });
+  });
+
+  // Simulate player starting game
+  it("Starting game", (done) => {
+    sockets[0].emit("LOBBY_start");
+    sockets[0].on("LOBBY_gameStarted", () => {
       done();
     });
   });

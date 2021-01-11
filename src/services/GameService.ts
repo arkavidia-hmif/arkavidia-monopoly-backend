@@ -12,10 +12,10 @@ export class GameService {
   private board: IBoard;
   private turn = 0;
 
-  // public async initializeGame(boardId: string): Promise<void> {
-  //   this.pawnList = [];
-  //   this.board = await Container.get(BoardService).getOne(boardId);
-  // }
+  public async initializeGame(boardId: string): Promise<void> {
+    this.pawnList = [];
+    this.board = await Container.get(BoardService).getOne(boardId);
+  }
 
   public getPawnList(): Pawn[] {
     return this.pawnList;
@@ -60,6 +60,8 @@ export class GameService {
         return;
       // beli2?
       case TileType.POWER_UP:
+        return;
+      default:
         return;
       // get random powerup
     }

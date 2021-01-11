@@ -24,9 +24,11 @@ export class LobbyController {
     console.info("Client disconnected");
   }
 
-  @OnMessage("start")
-  public async startGame(@MessageBody() message: string): Promise<string> {
-    return message;
+  @OnMessage("LOBBY_start")
+  @EmitOnSuccess("LOBBY_gameStarted")
+  public async startGame(): Promise<void> {
+    // this.gameService.initializeGame();
+    return;
   }
 
   @OnMessage("LOBBY_addPlayer")
