@@ -1,11 +1,13 @@
 import { getMetadataArgsStorage } from "routing-controllers";
 import { routingControllersToSpec } from "routing-controllers-openapi";
 import { validationMetadatasToSchemas } from "class-validator-jsonschema";
+import { defaultMetadataStorage } from "class-transformer/storage";
 import { Express } from "express";
 
 export const redocLoader = (expressApp: Express): void => {
   const storage = getMetadataArgsStorage();
   const schemas = validationMetadatasToSchemas({
+    classTransformerMetadataStorage: defaultMetadataStorage,
     refPointerPrefix: "#/components/schemas/",
   });
   const spec = routingControllersToSpec(
@@ -13,6 +15,8 @@ export const redocLoader = (expressApp: Express): void => {
     {},
     { components: { schemas } }
   );
+
+  // console.log(JSON.stringify(spec));
 
   const redocPage = `
   <!DOCTYPE html>

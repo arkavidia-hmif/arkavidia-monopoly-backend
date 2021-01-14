@@ -5,6 +5,7 @@ import { io, Socket } from "socket.io-client";
 import { before, after, it } from "mocha";
 import { expect } from "chai";
 import { Pawn } from "@/models/Game";
+import { LobbyEvent } from "@/events/LobbyEvent";
 
 const sockets: Socket[] = [];
 
@@ -37,8 +38,8 @@ describe("Player join", () => {
 
   // Simulate Player #1 join
   it("Player #1 join", (done) => {
-    sockets[0].emit("LOBBY_addPlayer", "id1");
-    sockets[0].on("LOBBY_playersInLobby", (pawns: Pawn[]) => {
+    sockets[0].emit(LobbyEvent.ADD_PLAYER, "id1");
+    sockets[0].on(LobbyEvent.GET_PLAYERS_IN_LOBBY, (pawns: Pawn[]) => {
       expect(pawns.length).to.be.equal(1);
       done();
     });
@@ -46,8 +47,8 @@ describe("Player join", () => {
 
   // Simulate Player #2 join
   it("Player #2 join", (done) => {
-    sockets[1].emit("LOBBY_addPlayer", "id2");
-    sockets[1].on("LOBBY_playersInLobby", (pawns: Pawn[]) => {
+    sockets[1].emit(LobbyEvent.ADD_PLAYER, "id2");
+    sockets[1].on(LobbyEvent.GET_PLAYERS_IN_LOBBY, (pawns: Pawn[]) => {
       expect(pawns.length).to.be.equal(2);
       done();
     });
@@ -81,8 +82,8 @@ describe("Start Game", () => {
 
   // Simulate player joining lobby
   it("Player join", (done) => {
-    sockets[0].emit("LOBBY_addPlayer", "id1");
-    sockets[0].on("LOBBY_playersInLobby", (pawns: Pawn[]) => {
+    sockets[0].emit(LobbyEvent.ADD_PLAYER, "id1");
+    sockets[0].on(LobbyEvent.GET_PLAYERS_IN_LOBBY, (pawns: Pawn[]) => {
       expect(pawns.length).to.be.equal(1);
       done();
     });
@@ -90,8 +91,8 @@ describe("Start Game", () => {
 
   // Simulate player starting game
   it("Starting game", (done) => {
-    sockets[0].emit("LOBBY_start");
-    sockets[0].on("LOBBY_gameStarted", () => {
+    sockets[0].emit(LobbyEvent.START);
+    sockets[0].on(LobbyEvent.GAME_STARTED, () => {
       done();
     });
   });

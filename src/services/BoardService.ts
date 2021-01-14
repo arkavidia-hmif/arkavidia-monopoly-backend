@@ -1,18 +1,22 @@
 import Board, { IBoard } from "@/models/Board";
+import { ITile } from "@/models/Tile";
 import { Service } from "typedi";
 
 @Service()
 export class BoardService {
   public async getAll(): Promise<IBoard[]> {
-    return await Board.find({}).populate("tile");
+    const boards = await Board.find({}).populate("tiles");
+    return boards;
   }
 
   public async getOne(id: string): Promise<IBoard> {
-    return await (await Board.findById(id)).populated("tile");
+    return await Board.findById(id).populate("tiles");
   }
 
-  public async create(data: Partial<IBoard>): Promise<IBoard> {
-    return await (await new Board(data).save()).populated("tile");
+  public async create(): Promise<IBoard> {
+    return await new Board({ tiles: [] } as {
+      tiles: string[] | ITile[];
+    }).save();
   }
 
   public async delete(id: string): Promise<null> {
@@ -22,13 +26,15 @@ export class BoardService {
 
   public async appendTile(id: string, tileId: string): Promise<IBoard> {
     const board = await Board.findById(id);
-    board.tiles.push(tileId);
-    return await (await board.save()).populated("tile");
+    (board.tiles as string[]).push(tileId);
+    await board.save();
+    return await this.getOne(board.id);
   }
 
   public async appendTiles(id: string, tileIds: string[]): Promise<IBoard> {
     const board = await Board.findById(id);
-    board.tiles = board.tiles.concat(tileIds);
-    return await (await board.save()).populated("tile");
+    board.tiles = (board.tiles as string[]).concat(tileIds);
+    await board.save();
+    return await this.getOne(board.id);
   }
 }
