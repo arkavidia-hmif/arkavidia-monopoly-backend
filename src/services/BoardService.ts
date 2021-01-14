@@ -5,13 +5,12 @@ import { Service } from "typedi";
 @Service()
 export class BoardService {
   public async getAll(): Promise<IBoard[]> {
-    const boards = await Board.find({});
-    boards.map((b) => b.populate("tile"));
+    const boards = await Board.find({}).populate("tiles");
     return boards;
   }
 
   public async getOne(id: string): Promise<IBoard> {
-    return await Board.findById(id).populate("tile");
+    return await Board.findById(id).populate("tiles");
   }
 
   public async create(): Promise<IBoard> {
