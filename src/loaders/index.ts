@@ -16,8 +16,8 @@ export const mainLoader = async (expressApp: Express): Promise<void> => {
     morganLoader(expressApp);
     console.info("🌵 Morgan logger initialized");
 
-    // redocLoader(expressApp);
-    // console.info("🌵 Redoc documentation initialized");
+    redocLoader(expressApp);
+    console.info("🌵 Redoc documentation initialized");
   } catch (err) {
     throw err;
   }

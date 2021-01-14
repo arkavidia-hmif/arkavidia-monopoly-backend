@@ -1,3 +1,4 @@
+import { LobbyEvent } from "@/events/LobbyEvent";
 import { Pawn } from "@/models/Game";
 import { GameService } from "@/services/GameService";
 import {
@@ -24,15 +25,15 @@ export class LobbyController {
     console.info("Client disconnected");
   }
 
-  @OnMessage("LOBBY_start")
-  @EmitOnSuccess("LOBBY_gameStarted")
+  @OnMessage(LobbyEvent.START)
+  @EmitOnSuccess(LobbyEvent.GAME_STARTED)
   public async startGame(): Promise<void> {
     // this.gameService.initializeGame();
     return;
   }
 
-  @OnMessage("LOBBY_addPlayer")
-  @EmitOnSuccess("LOBBY_playersInLobby")
+  @OnMessage(LobbyEvent.ADD_PLAYER)
+  @EmitOnSuccess(LobbyEvent.GET_PLAYERS_IN_LOBBY)
   public async addPlayer(@MessageBody() playerId: string): Promise<Pawn[]> {
     this.gameService.addPawn(playerId);
     return this.gameService.getPawnList();
