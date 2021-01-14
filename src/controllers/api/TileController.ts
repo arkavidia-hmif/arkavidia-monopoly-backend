@@ -23,6 +23,9 @@ export class TileBase {
 
   @IsNumber()
   multiplier?: number;
+
+  @IsString()
+  group?: string;
 }
 
 export class CreateTileBody extends TileBase {
@@ -37,6 +40,9 @@ export class CreateTileBody extends TileBase {
 
   @IsNumber()
   multiplier?: number;
+
+  @IsString()
+  group?: string;
 }
 
 export class UpdateTileBody extends TileBase {
@@ -51,6 +57,9 @@ export class UpdateTileBody extends TileBase {
 
   @IsNumber()
   multiplier?: number;
+
+  @IsString()
+  group?: string;
 }
 
 export class TileResponse extends TileBase {
