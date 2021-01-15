@@ -7,8 +7,8 @@ import { redocLoader } from "./redocLoader";
 export const mainLoader = async (expressApp: Express): Promise<void> => {
   try {
     // Define the loaders here...
-    corsLoader(expressApp);
-    console.info("🌵 CORS initialized");
+    // corsLoader(expressApp);
+    // console.info("🌵 CORS initialized");
 
     await mongooseLoader();
     console.info("🌵 Mongoose connected to MongoDB");

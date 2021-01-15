@@ -1,3 +1,5 @@
+import { GameEvent } from "@/events/GameEvent";
+
 export interface Pawn {
   playerId: string;
   position: number;
@@ -12,4 +14,9 @@ export enum PowerUp {
   ADD_POINTS,
   DISABLE_MULTIPLIER,
   PRISON_IMMUNITY,
+}
+
+export interface GameEventPacket<T> {
+  event: string;
+  body?: T | null;
 }

@@ -6,9 +6,9 @@ import Container, { Service } from "typedi";
 import { BoardService } from "./BoardService";
 import { TileService } from "./TileService";
 import { GameEvent } from "@/events/GameEvent";
-// import { ProblemService } from "./ProblemService";
-// import { IProblem } from "@/models/Problem";
 import { GameConfig } from "@/config/GameConfig";
+import { IProblem } from "@/models/Problem";
+import { ProblemService } from "./ProblemService";
 
 @Service()
 export class GameService {
@@ -21,8 +21,9 @@ export class GameService {
    * @param boardId The board ID used for the game.
    */
   public async initializeGame(boardId: string): Promise<void> {
-    this.pawnList = [];
     this.board = await Container.get(BoardService).getOne(boardId);
+    this.turn = 0;
+    return;
   }
 
   /**
@@ -30,6 +31,13 @@ export class GameService {
    */
   public getPawnList(): Pawn[] {
     return this.pawnList;
+  }
+
+  /**
+   * Gets the current board.
+   */
+  public getBoard(): IBoard {
+    return this.board;
   }
 
   /**
@@ -77,6 +85,10 @@ export class GameService {
     });
   }
 
+  public removePawn(playerId: string): void {
+    this.pawnList.filter((pawn) => pawn.playerId != playerId);
+  }
+
   /**
    * Add `value` points to the current playing player.
    * @param value The amoun of points added to the player.
@@ -103,6 +115,28 @@ export class GameService {
   }
 
   /**
+   * Get current tile from the tile service.
+   */
+  public async getCurrentTile(): Promise<ITile> {
+    return await Container.get(TileService).getOne(this.getCurrentTileId());
+  }
+
+  /**
+   * Get current problem from the current tile.
+   */
+  public async getCurrentProblem(): Promise<IProblem> {
+    const currentTile = await this.getCurrentTile();
+    if (!currentTile.problemId) {
+      throw new Error("This ain't a property tile!");
+    }
+
+    const currentProblem = await Container.get(ProblemService).getOne(
+      currentTile.problemId
+    );
+    return currentProblem;
+  }
+
+  /**
    * Used when the pawn is going to be moved.
    * @param dice How many tiles move forward
    */
@@ -122,7 +156,7 @@ export class GameService {
       case TileType.PROPERTY:
         return GameEvent.PROPERTY_TILE;
       case TileType.POWER_UP:
-        return GameEvent.POWER_UP_GET_ADD;
+        return GameEvent.POWER_UP_GET_ADD_POINTS;
       default:
         return GameEvent.END_TURN;
     }
@@ -163,7 +197,7 @@ export class GameService {
   /**
    * Used when the pawn landed on a property tile.
    */
-  public onPropertyTile(): string {
+  public onLandProperty(): string {
     const currentTileId: string = this.getCurrentTileId();
 
     for (let i = 0; i < this.pawnList.length; i++) {
@@ -178,18 +212,17 @@ export class GameService {
   /**
    * Used when the pawn chooses to answer a problem.
    */
-  public async onGetProblem(): Promise<string> {
-    // const currentTile: ITile = await Container.get(TileService).getOne(
-    //   this.getCurrentTileId()
-    // );
-    // const problem: IProblem = await Container.get(ProblemService).getOne(
-    //   currentTile.problemId
-    // );
-    // FIXME: belom bener, harusnya return problemnya sama problem id?
-    return "yada";
+  public async onGiveProblem(): Promise<{ event: string; body: IProblem }> {
+    const currentTile: ITile = await this.getCurrentTile();
+    const problem: IProblem = await Container.get(ProblemService).getOne(
+      currentTile.problemId
+    );
+    // FIXME: belom bener, return problem sama event
+    return { event: GameEvent.PROBLEM, body: problem };
   }
 
-  public onAnswerProblem(isCorrect: boolean): string {
+  public async onAnswerProblem(answer: number): Promise<string> {
+    const isCorrect = answer === (await this.getCurrentProblem()).answer;
     if (isCorrect) {
       return GameEvent.CORRECT_ANSWER;
     } else {
@@ -204,6 +237,28 @@ export class GameService {
   public onCorrectAnswer(): string {
     this.addPoints(GameConfig.CORRECT_ANSWER_POINTS);
     return GameEvent.END_TURN;
+  }
+
+  public onLandPowerUp(): string {
+    switch (this.getRandomPowerUp()) {
+      case PowerUp.ADD_POINTS:
+        return GameEvent.POWER_UP_GET_ADD_POINTS;
+      case PowerUp.DISABLE_MULTIPLIER:
+        return GameEvent.POWER_UP_GET_DISABLE_MULTIPLIER;
+      case PowerUp.PRISON_IMMUNITY:
+        return GameEvent.POWER_UP_GET_PRISON;
+      case PowerUp.REDUCE_POINTS:
+        return GameEvent.POWER_UP_GET_REDUCE_POINTS;
+    }
+  }
+
+  public onPickPlayer(): string {
+    return GameEvent.POWER_UP_PICK_PLAYER;
+  }
+
+  // TODO: implement check game finished
+  public checkGameFinished(): void {
+    return;
   }
 }
 
