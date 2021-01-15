@@ -1,7 +1,9 @@
 # 🌵 Arkavidia Monopoly Backend
 > For Arkalogica 2021
 
-![Arkavidia Logo](https://www.arkavidia.id/img/logo-horizontal.svg)
+![ESLint Badge](https://github.com/arkavidia-hmif/arkavidia-monopoly-backend/workflows/ESLint/badge.svg)
+
+<!-- ![Arkavidia Logo](https://www.arkavidia.id/img/logo-horizontal.svg) -->
 
 ## Prerequisites
 
