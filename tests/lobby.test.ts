@@ -1,5 +1,5 @@
 // import { env } from "@/env";
-import { io as ioServer, server as httpServer, start } from "@/app";
+import { io as ioServer, start } from "@/app";
 import { env } from "@/env";
 import { io, Socket } from "socket.io-client";
 import { before, after, it } from "mocha";
@@ -8,15 +8,17 @@ import { Pawn } from "@/models/Game";
 import { LobbyEvent } from "@/events/LobbyEvent";
 import mongoose from "mongoose";
 
+let server;
 const sockets: Socket[] = [];
 
-before(() => {
-  return start();
+before(async () => {
+  server = await start();
+  return;
 });
 
 after((done) => {
   ioServer.close();
-  httpServer.close();
+  server.close();
   mongoose.disconnect();
   done();
 });

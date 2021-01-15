@@ -1,8 +1,8 @@
 import { LobbyEvent } from "@/events/LobbyEvent";
+import { IBoard } from "@/models/Board";
 import { Pawn } from "@/models/Game";
 import { GameService } from "@/services/GameService";
 import {
-  // ConnectedSocket,
   EmitOnSuccess,
   MessageBody,
   OnConnect,
@@ -22,14 +22,15 @@ export class LobbyController {
 
   @OnDisconnect()
   public async disconnect(): Promise<void> {
+    // FIXME: kick player maybe?
     console.info("Client disconnected");
   }
 
   @OnMessage(LobbyEvent.START)
   @EmitOnSuccess(LobbyEvent.GAME_STARTED)
-  public async startGame(): Promise<void> {
-    // this.gameService.initializeGame();
-    return;
+  public async startGame(@MessageBody() boardId: string): Promise<IBoard> {
+    this.gameService.initializeGame(boardId);
+    return this.gameService.getBoard();
   }
 
   @OnMessage(LobbyEvent.ADD_PLAYER)
