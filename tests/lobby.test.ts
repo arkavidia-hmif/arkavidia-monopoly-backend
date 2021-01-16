@@ -6,6 +6,7 @@ import { before, after, it } from "mocha";
 import { expect } from "chai";
 import { Pawn } from "@/models/Game";
 import { LobbyEvent } from "@/events/LobbyEvent";
+import mongoose from "mongoose";
 
 const sockets: Socket[] = [];
 
@@ -16,6 +17,7 @@ before(() => {
 after((done) => {
   ioServer.close();
   httpServer.close();
+  mongoose.disconnect();
   done();
 });
 
@@ -95,5 +97,13 @@ describe("Start Game", () => {
     sockets[0].on(LobbyEvent.GAME_STARTED, () => {
       done();
     });
+  });
+
+  // Terminate first player connection
+  after((done) => {
+    if (sockets[0].connected) {
+      sockets[0].disconnect();
+    }
+    done();
   });
 });
