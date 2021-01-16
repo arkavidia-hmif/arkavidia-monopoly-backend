@@ -1,5 +1,5 @@
 import { IBoard } from "@/models/Board";
-import { Pawn, PowerUp } from "@/models/Game";
+import { GameEventPacket, Pawn, PowerUp } from "@/models/Game";
 import { ITile, TileType } from "@/models/Tile";
 import Container, { Service } from "typedi";
 
@@ -93,8 +93,8 @@ export class GameService {
    * Add `value` points to the current playing player.
    * @param value The amoun of points added to the player.
    */
-  public addPoints(value: number): void {
-    this.pawnList[this.turn].score += value;
+  public addPoints(playerIndex: number, value: number): void {
+    this.pawnList[playerIndex].score += value;
   }
 
   /**
@@ -129,18 +129,18 @@ export class GameService {
     if (!currentTile.problemId) {
       throw new Error("This ain't a property tile!");
     }
+    const currentProblem = await this.getCurrentProblem();
 
-    const currentProblem = await Container.get(ProblemService).getOne(
-      currentTile.problemId
-    );
     return currentProblem;
   }
+
+  // -=-=-=-=-= EVENT RELATED -=-=-=-=-=
 
   /**
    * Used when the pawn is going to be moved.
    * @param dice How many tiles move forward
    */
-  public async onMove(dice: number): Promise<string> {
+  public async onMove(dice: number): Promise<GameEventPacket<null>> {
     this.movePawn(dice);
     const pos: number = this.pawnList[this.turn].position;
     const currentTile: ITile = await Container.get(TileService).getOne(
@@ -148,112 +148,131 @@ export class GameService {
     );
     switch (currentTile.type) {
       case TileType.START:
-        return GameEvent.START_TILE;
+        return { eventName: GameEvent.START_TILE };
       case TileType.JAIL:
-        return GameEvent.PRISON_TILE;
+        return { eventName: GameEvent.PRISON_TILE };
       case TileType.PARKING:
-        return GameEvent.FREE_PARKING_TILE;
+        return { eventName: GameEvent.FREE_PARKING_TILE };
       case TileType.PROPERTY:
-        return GameEvent.PROPERTY_TILE;
+        return { eventName: GameEvent.PROPERTY_TILE };
       case TileType.POWER_UP:
-        return GameEvent.POWER_UP_GET_ADD_POINTS;
+        return { eventName: GameEvent.POWER_UP_GET_ADD_POINTS };
       default:
-        return GameEvent.END_TURN;
+        return { eventName: GameEvent.END_TURN };
     }
   }
 
   // TODO: fix pass by start
-  public onLandStart(): string {
-    return GameEvent.END_TURN;
+  public onLandStart(): GameEventPacket<null> {
+    return { eventName: GameEvent.END_TURN };
   }
 
   /**
    * Used when the pawn lands on a prison tile
    */
-  public onLandPrison(): string {
+  public onLandPrison(): GameEventPacket<null> {
     const currentPawn: Pawn = this.pawnList[this.turn];
     if (currentPawn.prisonImmunity > 0) {
       currentPawn.prisonImmunity--;
       currentPawn.isPrisoner = false;
     }
-    return GameEvent.END_TURN;
+    return { eventName: GameEvent.END_TURN };
   }
 
   /**
    * Used when the pawn lands on a free parking tile.
    */
-  public onLandFreeParking(): string {
-    return GameEvent.FREE_PARKING_PICK_TILE;
-  }
-
-  /**
-   * Used when the pawn ends the turn/ran out of time.
-   */
-  public onEndTurn(): string {
-    this.changeTurn();
-    return GameEvent.START_TURN;
+  public onLandFreeParking(): GameEventPacket<null> {
+    return { eventName: GameEvent.FREE_PARKING_PICK_TILE };
   }
 
   /**
    * Used when the pawn landed on a property tile.
    */
-  public onLandProperty(): string {
+  public onLandProperty(): GameEventPacket<null> {
     const currentTileId: string = this.getCurrentTileId();
 
     for (let i = 0; i < this.pawnList.length; i++) {
       if (this.pawnList[i].property.includes(currentTileId)) {
-        return GameEvent.END_TURN;
+        return { eventName: GameEvent.END_TURN };
       }
     }
 
-    return GameEvent.GIVE_PROBLEM;
+    return { eventName: GameEvent.GIVE_PROBLEM };
   }
 
   /**
    * Used when the pawn chooses to answer a problem.
    */
-  public async onGiveProblem(): Promise<{ event: string; body: IProblem }> {
+  public async onGiveProblem(): Promise<GameEventPacket<IProblem>> {
     const currentTile: ITile = await this.getCurrentTile();
     const problem: IProblem = await Container.get(ProblemService).getOne(
       currentTile.problemId
     );
     // FIXME: belom bener, return problem sama event
-    return { event: GameEvent.PROBLEM, body: problem };
+    return { eventName: GameEvent.PROBLEM, body: problem };
   }
 
-  public async onAnswerProblem(answer: number): Promise<string> {
+  public async onAnswerProblem(answer: number): Promise<GameEventPacket<null>> {
     const isCorrect = answer === (await this.getCurrentProblem()).answer;
     if (isCorrect) {
-      return GameEvent.CORRECT_ANSWER;
+      return { eventName: GameEvent.CORRECT_ANSWER };
     } else {
-      return GameEvent.WRONG_ANSWER;
+      return { eventName: GameEvent.WRONG_ANSWER };
     }
   }
 
-  public onWrongAnswer(): string {
-    return GameEvent.END_TURN;
+  public onWrongAnswer(): GameEventPacket<null> {
+    return { eventName: GameEvent.END_TURN };
   }
 
-  public onCorrectAnswer(): string {
-    this.addPoints(GameConfig.CORRECT_ANSWER_POINTS);
-    return GameEvent.END_TURN;
+  public onCorrectAnswer(): GameEventPacket<null> {
+    this.addPoints(this.turn, GameConfig.CORRECT_ANSWER_POINTS);
+    return { eventName: GameEvent.END_TURN };
   }
 
-  public onLandPowerUp(): string {
+  public onLandPowerUp(): GameEventPacket<null> {
     switch (this.getRandomPowerUp()) {
       case PowerUp.ADD_POINTS:
-        return GameEvent.POWER_UP_GET_ADD_POINTS;
+        return { eventName: GameEvent.POWER_UP_GET_ADD_POINTS };
       case PowerUp.DISABLE_MULTIPLIER:
-        return GameEvent.POWER_UP_GET_DISABLE_MULTIPLIER;
+        return { eventName: GameEvent.POWER_UP_GET_DISABLE_MULTIPLIER };
       case PowerUp.PRISON_IMMUNITY:
-        return GameEvent.POWER_UP_GET_PRISON;
+        return { eventName: GameEvent.POWER_UP_GET_PRISON };
       case PowerUp.REDUCE_POINTS:
-        return GameEvent.POWER_UP_GET_REDUCE_POINTS;
+        return { eventName: GameEvent.POWER_UP_GET_REDUCE_POINTS };
     }
   }
 
-  public onPickPlayer(): string {
-    return GameEvent.POWER_UP_PICK_PLAYER;
+  public onPowerUpAddPoints(): GameEventPacket<null> {
+    this.addPoints(this.turn, GameConfig.POWER_UP_POINTS);
+    return { eventName: GameEvent.END_TURN };
+  }
+
+  public onPowerUpReducePoints(): GameEventPacket<Pawn[]> {
+    return { eventName: GameEvent.POWER_UP_PICK_PLAYER, body: this.pawnList };
+  }
+
+  public onPowerUpDisableMultiplier(): GameEventPacket<null> {
+    return { eventName: GameEvent.POWER_UP_PICK_PROPERTY };
+  }
+
+  public onPowerUpPrisonImmunity(): GameEventPacket<null> {
+    this.pawnList[this.turn].prisonImmunity++;
+    return { eventName: GameEvent.END_TURN };
+  }
+
+  public onPowerUpPickPlayer(playerIndex: number): GameEventPacket<null> {
+    this.addPoints(playerIndex, -GameConfig.POWER_UP_POINTS);
+    return { eventName: GameEvent.END_TURN };
+  }
+
+  /**
+   * Used when the pawn ends the turn/ran out of time.
+   */
+  public onEndTurn(): GameEventPacket<null> {
+    this.changeTurn();
+    return { eventName: GameEvent.START_TURN };
   }
 
   // TODO: implement check game finished

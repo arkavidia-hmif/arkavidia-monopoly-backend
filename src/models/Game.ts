@@ -1,5 +1,3 @@
-import { GameEvent } from "@/events/GameEvent";
-
 export interface Pawn {
   playerId: string;
   position: number;
@@ -17,6 +15,6 @@ export enum PowerUp {
 }
 
 export interface GameEventPacket<T> {
-  event: string;
+  eventName: string;
   body?: T | null;
 }
