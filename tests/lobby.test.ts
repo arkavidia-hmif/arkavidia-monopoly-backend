@@ -75,37 +75,30 @@ describe("Player join", () => {
   });
 });
 
-describe("Start Game", () => {
-  // Initialize first player
-  before((done) => {
-    sockets[0] = io(`http://localhost:${env.port}/`);
-    sockets[0].on("connect", () => {
-      done();
-    });
-  });
+// describe("Start Game", () => {
+//   // Initialize first player
+//   before((done) => {
+//     sockets[0] = io(`http://localhost:${env.port}/`);
+//     sockets[0].on("connect", () => {
+//       done();
+//     });
+//   });
 
-  // Simulate player joining lobby
-  it("Player join", (done) => {
-    sockets[0].emit(LobbyEvent.ADD_PLAYER, "id1");
-    sockets[0].on(LobbyEvent.GET_PLAYERS_IN_LOBBY, (pawns: Pawn[]) => {
-      expect(pawns.length).to.be.equal(1);
-      done();
-    });
-  });
+//   // Simulate player joining lobby
+//   it("Player join", (done) => {
+//     sockets[0].emit(LobbyEvent.ADD_PLAYER, "id1");
+//     sockets[0].on(LobbyEvent.GET_PLAYERS_IN_LOBBY, (pawns: Pawn[]) => {
+//       expect(pawns.length).to.be.equal(1);
+//       done();
+//     });
+//   });
 
-  // Simulate player starting game
-  it("Starting game", (done) => {
-    sockets[0].emit(LobbyEvent.START);
-    sockets[0].on(LobbyEvent.GAME_STARTED, () => {
-      done();
-    });
-  });
-
-  // Terminate first player connection
-  after((done) => {
-    if (sockets[0].connected) {
-      sockets[0].disconnect();
-    }
-    done();
-  });
-});
+//   // Simulate player starting game
+//   it("Starting game", (done) => {
+//     sockets[0].emit(LobbyEvent.START, "5ffc9dfa46b32f44349d73da");
+//     sockets[0].on(LobbyEvent.GAME_STARTED, (board: IBoard) => {
+//       expect(board).to.not.be.undefined;
+//       done();
+//     });
+//   });
+// });
