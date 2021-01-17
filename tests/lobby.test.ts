@@ -1,4 +1,3 @@
-// import { env } from "@/env";
 import { io as ioServer, start } from "@/app";
 import { env } from "@/env";
 import { io, Socket } from "socket.io-client";

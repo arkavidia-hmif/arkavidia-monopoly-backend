@@ -105,4 +105,13 @@ export class GameController {
     const gameEvent = this.gameService.onPowerUpDisableMultiplier();
     socket.emit(gameEvent.eventName);
   }
+
+  @OnMessage(GameEvent.POWER_UP_PICK_PROPERTY)
+  public onPowerUpPickProperty(
+    @SocketIO() socket: Server,
+    @MessageBody() propertyIndex: number
+  ): void {
+    const gameEvent = this.gameService.onPowerUpPickProperty(propertyIndex);
+    socket.emit(gameEvent.eventName);
+  }
 }
