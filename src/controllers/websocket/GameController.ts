@@ -14,9 +14,11 @@ export class GameController {
   constructor(private gameService: GameService) {}
 
   @OnMessage(GameEvent.START_TURN)
-  @EmitOnSuccess(GameEvent.MOVE)
-  public onStartTurn(): void {
-    return;
+  // @EmitOnSuccess(GameEvent.MOVE)
+  public onStartTurn(@SocketIO() socket: Server): void {
+    const [dice1, dice2] = this.gameService.rollTwoDice();
+    socket.emit(GameEvent.MOVE, dice1 + dice2);
+    // return;
   }
 
   @OnMessage(GameEvent.MOVE)
@@ -31,7 +33,7 @@ export class GameController {
   @OnMessage(GameEvent.END_TURN)
   public onEndTurn(@SocketIO() socket: Server): void {
     const gameEvent = this.gameService.onEndTurn();
-    socket.emit(gameEvent.eventName);
+    socket.emit(gameEvent.eventName, this.gameService.getTurn());
   }
 
   @OnMessage(GameEvent.PROPERTY_TILE)

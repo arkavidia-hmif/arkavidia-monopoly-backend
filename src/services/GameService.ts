@@ -41,6 +41,13 @@ export class GameService {
   }
 
   /**
+   * Gets the current turn.
+   */
+  public getTurn(): number {
+    return this.turn;
+  }
+
+  /**
    * Change to the next turn. Turn has the value of `[0..pawnList.length-1]`.
    */
   public changeTurn(): void {
@@ -126,7 +133,7 @@ export class GameService {
    */
   public async getCurrentProblem(): Promise<IProblem> {
     const currentTile = await this.getCurrentTile();
-    if (!currentTile.problemId) {
+    if (!currentTile.problem) {
       throw new Error("This ain't a property tile!");
     }
     const currentProblem = await this.getCurrentProblem();
@@ -207,9 +214,8 @@ export class GameService {
   public async onGiveProblem(): Promise<GameEventPacket<IProblem>> {
     const currentTile: ITile = await this.getCurrentTile();
     const problem: IProblem = await Container.get(ProblemService).getOne(
-      currentTile.problemId
+      (currentTile.problem as IProblem)._id
     );
-    // FIXME: belom bener, return problem sama event
     return { eventName: GameEvent.PROBLEM, body: problem };
   }
 

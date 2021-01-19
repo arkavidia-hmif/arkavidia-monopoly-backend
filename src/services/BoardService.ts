@@ -1,16 +1,29 @@
 import Board, { IBoard } from "@/models/Board";
+import Problem from "@/models/Problem";
 import { ITile } from "@/models/Tile";
 import { Service } from "typedi";
 
 @Service()
 export class BoardService {
   public async getAll(): Promise<IBoard[]> {
-    const boards = await Board.find({}).populate("tiles");
+    const boards = await Board.find({}).populate({
+      path: "tiles",
+      populate: {
+        path: "problem",
+        model: Problem,
+      },
+    });
     return boards;
   }
 
   public async getOne(id: string): Promise<IBoard> {
-    return await Board.findById(id).populate("tiles");
+    return await Board.findById(id).populate({
+      path: "tiles",
+      populate: {
+        path: "problem",
+        model: Problem,
+      },
+    });
   }
 
   public async create(): Promise<IBoard> {

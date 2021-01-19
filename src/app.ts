@@ -36,10 +36,6 @@ useSocketServer(io, {
 export const start = async (): Promise<http.Server> => {
   await mainLoader(app);
 
-  app.use("/test", (_req, res) => {
-    res.sendFile(path.resolve("./src/test.html"));
-  });
-
   const serverPromise = new Promise<http.Server>((resolve) => {
     server.listen(env.port, () => {
       resolve(server);
