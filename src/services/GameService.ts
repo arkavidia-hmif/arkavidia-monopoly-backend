@@ -48,6 +48,14 @@ export class GameService {
   }
 
   /**
+   * Check current turn. If player ID on the current turn is the same as supplied, will return true. Otherwise, false.
+   */
+  public isPlaying(playerId: string): boolean {
+    // console.log(this.turn);
+    return this.pawnList[this.turn].playerId === playerId;
+  }
+
+  /**
    * Change to the next turn. Turn has the value of `[0..pawnList.length-1]`.
    */
   public changeTurn(): void {
@@ -75,6 +83,19 @@ export class GameService {
   public movePawn(value: number): void {
     this.pawnList[this.turn].position =
       (this.pawnList[this.turn].position + value) % this.board.tiles.length;
+  }
+
+  /**
+   * Finds the first tile which holds the tile type and move the pawn there.
+   */
+  public movePawnToTileType(tileType: TileType): void {
+    for (let i = 0; i < this.board.tiles.length; i++) {
+      console.log((this.board.tiles[i] as ITile).type);
+      if ((this.board.tiles[i] as ITile).type === tileType) {
+        this.pawnList[this.turn].position = i;
+        return;
+      }
+    }
   }
 
   /**
@@ -213,9 +234,7 @@ export class GameService {
    */
   public async onGiveProblem(): Promise<GameEventPacket<IProblem>> {
     const currentTile: ITile = await this.getCurrentTile();
-    const problem: IProblem = await Container.get(ProblemService).getOne(
-      (currentTile.problem as IProblem)._id
-    );
+    const problem: IProblem = currentTile.problem as IProblem;
     return { eventName: GameEvent.PROBLEM, body: problem };
   }
 

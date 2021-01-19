@@ -2,12 +2,12 @@ import mongoose, { Document, Schema } from "mongoose";
 import { IProblem } from "./Problem";
 
 export enum TileType {
-  START,
-  JAIL,
-  PARKING,
-  PROPERTY,
-  POWER_UP,
-  NONE,
+  START = "START",
+  JAIL = "JAIL",
+  PARKING = "PARKING",
+  PROPERTY = "PROPERTY",
+  POWER_UP = "POWER_UP",
+  NONE = "NONE",
 }
 
 export interface ITile extends Document {

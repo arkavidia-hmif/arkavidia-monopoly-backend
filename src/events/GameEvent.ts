@@ -2,6 +2,7 @@ export const GameEvent = {
   // Turn related events
   START_TURN: "GAME_startTurn",
   END_TURN: "GAME_endTurn",
+  INVALID_TURN: "GAME_invalidTurn",
 
   MOVE: "GAME_move",
 
