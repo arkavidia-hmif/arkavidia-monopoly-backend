@@ -75,7 +75,6 @@ export class GameController {
   ): void {
     if (this.gameService.isPlaying(playerId)) {
       this.gameService.onGiveProblem().then((gameEvent) => {
-        console.log(gameEvent);
         socket.emit(gameEvent.eventName, gameEvent.body);
       });
     } else {

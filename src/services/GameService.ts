@@ -90,7 +90,6 @@ export class GameService {
    */
   public movePawnToTileType(tileType: TileType): void {
     for (let i = 0; i < this.board.tiles.length; i++) {
-      console.log((this.board.tiles[i] as ITile).type);
       if ((this.board.tiles[i] as ITile).type === tileType) {
         this.pawnList[this.turn].position = i;
         return;
@@ -106,7 +105,7 @@ export class GameService {
     this.pawnList.push({
       playerId,
       position: 0,
-      score: 0,
+      points: 0,
       property: [],
       prisonImmunity: 0,
       isPrisoner: false,
@@ -122,7 +121,7 @@ export class GameService {
    * @param value The amoun of points added to the player.
    */
   public addPoints(playerIndex: number, value: number): void {
-    this.pawnList[playerIndex].score += value;
+    this.pawnList[playerIndex].points += value;
   }
 
   /**
@@ -157,9 +156,11 @@ export class GameService {
     if (!currentTile.problem) {
       throw new Error("This ain't a property tile!");
     }
-    const currentProblem = await this.getCurrentProblem();
+    return currentTile.problem as IProblem;
+  }
 
-    return currentProblem;
+  public getCurrentPoints(): number {
+    return this.pawnList[this.turn].points;
   }
 
   // -=-=-=-=-= EVENT RELATED -=-=-=-=-=
@@ -239,7 +240,8 @@ export class GameService {
   }
 
   public async onAnswerProblem(answer: number): Promise<GameEventPacket<null>> {
-    const isCorrect = answer === (await this.getCurrentProblem()).answer;
+    const currentProblem = await this.getCurrentProblem();
+    const isCorrect = answer === currentProblem.answer;
     if (isCorrect) {
       return { eventName: GameEvent.CORRECT_ANSWER };
     } else {
