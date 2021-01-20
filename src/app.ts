@@ -19,10 +19,11 @@ useRoutingContainer(Container);
 useSocketContainer(Container);
 
 export const app = express();
-export const server = http.createServer(app);
+const server = http.createServer(app);
 export const io = new socketio.Server(server);
 
 useExpressServer(app, {
+  cors: true,
   routePrefix: "/api",
   controllers: [__dirname + "/controllers/api/*.ts"],
   classTransformer: false,
@@ -32,19 +33,16 @@ useSocketServer(io, {
   controllers: [__dirname + "/controllers/websocket/*.ts"],
 });
 
-export const start = async (): Promise<void> => {
+export const start = async (): Promise<http.Server> => {
   await mainLoader(app);
 
-  app.use("/test", (_req, res) => {
-    res.sendFile(path.resolve("./src/test.html"));
-  });
-
-  const serverPromise = new Promise<void>((resolve) => {
+  const serverPromise = new Promise<http.Server>((resolve) => {
     server.listen(env.port, () => {
-      resolve();
+      resolve(server);
     });
   });
 
   await serverPromise;
   console.info(`⭐ Live on port ${env.port}`);
+  return serverPromise;
 };

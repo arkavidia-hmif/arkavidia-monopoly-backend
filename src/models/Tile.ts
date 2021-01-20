@@ -1,17 +1,18 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { IProblem } from "./Problem";
 
 export enum TileType {
-  START,
-  JAIL,
-  PARKING,
-  PROPERTY,
-  POWER_UP,
-  NONE,
+  START = "START",
+  JAIL = "JAIL",
+  PARKING = "PARKING",
+  PROPERTY = "PROPERTY",
+  POWER_UP = "POWER_UP",
+  NONE = "NONE",
 }
 
 export interface ITile extends Document {
   type: TileType;
-  problemId?: string;
+  problem?: string | IProblem;
   price?: number;
   multiplier?: number;
   group?: string | null;
@@ -19,7 +20,7 @@ export interface ITile extends Document {
 
 export const TileSchema = new Schema<ITile>({
   type: { type: TileType, required: true },
-  problemId: { type: Schema.Types.ObjectId, ref: "problem" },
+  problem: { type: Schema.Types.ObjectId, ref: "problem" },
   price: { type: Number },
   multiplier: { type: Number },
   group: { type: String },

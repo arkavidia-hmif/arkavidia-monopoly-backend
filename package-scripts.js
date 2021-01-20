@@ -21,7 +21,7 @@ module.exports = {
       },
     },
     test: {
-      script: "ts-mocha --paths tests/**/*.ts",
+      script: "ts-mocha --paths tests/**/*.ts --timeout 15000 --sort",
       description: "Run unit test on the API.",
     },
   },

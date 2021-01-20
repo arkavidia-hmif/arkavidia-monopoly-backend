@@ -44,20 +44,6 @@ export class BoardResponse extends BoardBase {
 export class BoardController {
   constructor(private boardService: BoardService) {}
 
-  @Get("/")
-  @ResponseSchema(BoardResponse, { isArray: true })
-  @OpenAPI({
-    description: "Get all boards.",
-    responses: {
-      "200": {
-        description: "OK",
-      },
-    },
-  })
-  public async getBoard(): Promise<BoardResponse[]> {
-    return await this.boardService.getAll();
-  }
-
   @Get("/:id")
   @ResponseSchema(BoardResponse)
   @OpenAPI({
@@ -70,6 +56,20 @@ export class BoardController {
   })
   public async getBoardById(@Param("id") id: string): Promise<BoardResponse> {
     return await this.boardService.getOne(id);
+  }
+
+  @Get("/")
+  @ResponseSchema(BoardResponse, { isArray: true })
+  @OpenAPI({
+    description: "Get all boards.",
+    responses: {
+      "200": {
+        description: "OK",
+      },
+    },
+  })
+  public async getBoard(): Promise<BoardResponse[]> {
+    return await this.boardService.getAll();
   }
 
   @Post("/")

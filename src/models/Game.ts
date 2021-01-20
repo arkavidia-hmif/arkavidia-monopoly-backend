@@ -13,3 +13,8 @@ export enum PowerUp {
   DISABLE_MULTIPLIER,
   PRISON_IMMUNITY,
 }
+
+export interface GameEventPacket<T> {
+  eventName: string;
+  body?: T | null;
+}

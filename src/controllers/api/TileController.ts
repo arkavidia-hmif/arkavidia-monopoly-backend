@@ -10,13 +10,14 @@ import {
 import { TileService } from "@/services/TileService";
 import { IsEnum, IsNumber, IsString } from "class-validator";
 import { TileType } from "@/models/Tile";
+import { IProblem } from "@/models/Problem";
 
 export class TileBase {
   @IsEnum(TileType)
   type?: TileType;
 
   @IsString()
-  problemId?: string;
+  problem?: string | IProblem;
 
   @IsNumber()
   price?: number;
@@ -33,7 +34,7 @@ export class CreateTileBody extends TileBase {
   type: TileType;
 
   @IsString()
-  problemId?: string;
+  problem?: string | IProblem;
 
   @IsNumber()
   price?: number;
@@ -50,7 +51,7 @@ export class UpdateTileBody extends TileBase {
   type?: TileType;
 
   @IsString()
-  problemId?: string;
+  problem?: string | IProblem;
 
   @IsNumber()
   price?: number;
