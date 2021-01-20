@@ -201,17 +201,17 @@ export class GameController {
     }
   }
 
-  @OnMessage(GameEvent.POWER_UP_PICK_PROPERTY)
-  public onPowerUpPickProperty(
-    @SocketIO() socket: Server,
-    @SocketId() playerId: string,
-    @MessageBody() propertyIndex: number
-  ): void {
-    if (this.gameService.isPlaying(playerId)) {
-      const gameEvent = this.gameService.onPowerUpPickProperty(propertyIndex);
-      socket.emit(gameEvent.eventName);
-    } else {
-      socket.emit(GameEvent.INVALID_TURN);
-    }
-  }
+  // @OnMessage(GameEvent.POWER_UP_PICK_PROPERTY)
+  // public onPowerUpPickProperty(
+  //   @SocketIO() socket: Server,
+  //   @SocketId() playerId: string,
+  //   @MessageBody() propertyIndex: number
+  // ): void {
+  //   if (this.gameService.isPlaying(playerId)) {
+  //     const gameEvent = this.gameService.onPowerUpPickProperty(propertyIndex);
+  //     socket.emit(gameEvent.eventName);
+  //   } else {
+  //     socket.emit(GameEvent.INVALID_TURN);
+  //   }
+  // }
 }

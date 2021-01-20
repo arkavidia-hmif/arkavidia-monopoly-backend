@@ -13,7 +13,6 @@ import { mainLoader } from "@/loaders";
 import { Container } from "typedi";
 import { env } from "./env";
 import * as socketio from "socket.io";
-import * as path from "path";
 
 useRoutingContainer(Container);
 useSocketContainer(Container);

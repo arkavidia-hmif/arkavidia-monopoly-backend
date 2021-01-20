@@ -1,5 +1,4 @@
 import { LobbyEvent } from "@/events/LobbyEvent";
-import { IBoard } from "@/models/Board";
 import { Pawn } from "@/models/Game";
 import { GameService } from "@/services/GameService";
 import {

@@ -8,7 +8,6 @@ import { TileService } from "./TileService";
 import { GameEvent } from "@/events/GameEvent";
 import { GameConfig } from "@/config/GameConfig";
 import { IProblem } from "@/models/Problem";
-import { ProblemService } from "./ProblemService";
 
 @Service()
 export class GameService {
@@ -295,12 +294,12 @@ export class GameService {
   }
 
   // FIXME: gabener ini
-  public onPowerUpPickProperty(propertyIndex: number): GameEventPacket<null> {
-    const properties = (this.board.tiles as ITile[]).filter(
-      (tile) => tile.type === TileType.PROPERTY
-    );
-    return { eventName: GameEvent.END_TURN };
-  }
+  // public onPowerUpPickProperty(propertyIndex: number): GameEventPacket<null> {
+  //   const properties = (this.board.tiles as ITile[]).filter(
+  //     (tile) => tile.type === TileType.PROPERTY
+  //   );
+  //   return { eventName: GameEvent.END_TURN };
+  // }
 
   /**
    * Used when the pawn ends the turn/ran out of time.
