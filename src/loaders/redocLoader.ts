@@ -16,8 +16,6 @@ export const redocLoader = (expressApp: Express): void => {
     { components: { schemas } }
   );
 
-  // console.log(JSON.stringify(spec));
-
   const redocPage = `
   <!DOCTYPE html>
   <html>

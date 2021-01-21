@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=monopoly
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=Password123!
+    volumes:
+      - mongodb_volume:/data/db
+  monopoly_backend:
+    image: docker.pkg.github.com/arkavidia-hmif/arkavidia-monopoly-backend/monopoly-build:staging
+    container_name: monopoly_backend
+    restart: always
+    environment:
+      - PORT=3000
+      - DB_HOST=mongodb
+      - DB_NAME=monopoly
+      - DB_USER=root
+      - DB_PASS=Password123!
+      - API_URL=http://localhost
+    depends_on:
+      - mongodb
+    ports:
+      - "3000:3000"
+volumes:
+  mongodb_volume:
