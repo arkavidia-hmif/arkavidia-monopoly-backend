@@ -24,5 +24,10 @@ module.exports = {
       script: "ts-mocha --paths tests/**/*.ts --timeout 15000 --sort",
       description: "Run unit test on the API.",
     },
+    seed: {
+      script:
+        "cross-env NODE_ENV=test ts-node-transpile-only -r tsconfig-paths/register seeder/index.ts",
+      description: "Seed database.",
+    },
   },
 };
