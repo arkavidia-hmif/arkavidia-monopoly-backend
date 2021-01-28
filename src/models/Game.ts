@@ -1,7 +1,7 @@
 export interface Pawn {
   playerId: string;
   position: number;
-  score: number;
+  points: number;
   property: string[];
   prisonImmunity: 0;
   isPrisoner: boolean;

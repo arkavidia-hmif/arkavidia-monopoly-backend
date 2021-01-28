@@ -5,7 +5,8 @@
     "dev": "nps dev",
     "lint:check": "nps lint.check",
     "lint:fix": "nps lint.fix",
-    "test": "nps test"
+    "test": "nps test",
+    "seed": "nps seed"
   },
   "dependencies": {
     "class-transformer": "^0.3.1",
