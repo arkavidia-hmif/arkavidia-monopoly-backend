@@ -1,7 +1,7 @@
 # 🌵 Arkavidia Monopoly Backend
 
 ![ESLint Badge](https://github.com/arkavidia-hmif/arkavidia-monopoly-backend/workflows/ESLint/badge.svg)
-![Build Docker Badge](https://github.com/arkavidia-hmif/arkavidia-monopoly-backend/workflows/Build%20Docker%20Image/badge.svg)
+![Build and Deploy Badge](https://github.com/arkavidia-hmif/arkavidia-monopoly-backend/workflows/Build%20and%20Deploy/badge.svg)
 
 <!-- ![Arkavidia Logo](https://www.arkavidia.id/img/logo-horizontal.svg) -->
 
