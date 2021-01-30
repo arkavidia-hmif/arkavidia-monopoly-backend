@@ -46,6 +46,18 @@ export class GameService {
     return this.turn;
   }
 
+  public getEnemyTilesId(playerId: string): string[] {
+    const ownedByOthers: string[] = [];
+
+    this.pawnList.forEach((player) => {
+      if (player.playerId !== playerId) {
+        ownedByOthers.concat(player.property);
+      }
+    });
+
+    return ownedByOthers;
+  }
+
   /**
    * Check current turn. If player ID on the current turn is the same as supplied, will return true. Otherwise, false.
    */
@@ -119,7 +131,7 @@ export class GameService {
    * Add `value` points to the current playing player.
    * @param value The amoun of points added to the player.
    */
-  public addPoints(playerIndex: number, value: number): void {
+  public modifyPoints(playerIndex: number, value: number): void {
     this.pawnList[playerIndex].points += value;
   }
 
@@ -184,7 +196,7 @@ export class GameService {
       case TileType.PROPERTY:
         return { eventName: GameEvent.PROPERTY_TILE };
       case TileType.POWER_UP:
-        return { eventName: GameEvent.POWER_UP_GET_ADD_POINTS };
+        return { eventName: GameEvent.POWER_UP_TILE };
       default:
         return { eventName: GameEvent.END_TURN };
     }
@@ -253,7 +265,7 @@ export class GameService {
   }
 
   public onCorrectAnswer(): GameEventPacket<null> {
-    this.addPoints(this.turn, GameConfig.CORRECT_ANSWER_POINTS);
+    this.modifyPoints(this.turn, GameConfig.CORRECT_ANSWER_POINTS);
     return { eventName: GameEvent.END_TURN };
   }
 
@@ -267,11 +279,13 @@ export class GameService {
         return { eventName: GameEvent.POWER_UP_GET_PRISON };
       case PowerUp.REDUCE_POINTS:
         return { eventName: GameEvent.POWER_UP_GET_REDUCE_POINTS };
+      default:
+        return { eventName: GameEvent.END_TURN };
     }
   }
 
   public onPowerUpAddPoints(): GameEventPacket<null> {
-    this.addPoints(this.turn, GameConfig.POWER_UP_POINTS);
+    this.modifyPoints(this.turn, GameConfig.POWER_UP_POINTS);
     return { eventName: GameEvent.END_TURN };
   }
 
@@ -289,17 +303,30 @@ export class GameService {
   }
 
   public onPowerUpPickPlayer(playerIndex: number): GameEventPacket<null> {
-    this.addPoints(playerIndex, -GameConfig.POWER_UP_POINTS);
+    this.modifyPoints(playerIndex, -GameConfig.POWER_UP_POINTS);
     return { eventName: GameEvent.END_TURN };
   }
 
-  // FIXME: gabener ini
-  // public onPowerUpPickProperty(propertyIndex: number): GameEventPacket<null> {
-  //   const properties = (this.board.tiles as ITile[]).filter(
-  //     (tile) => tile.type === TileType.PROPERTY
-  //   );
-  //   return { eventName: GameEvent.END_TURN };
-  // }
+  public onPowerUpPrePickProperty(): GameEventPacket<string[]> {
+    const player: Pawn = this.pawnList[this.turn];
+    return {
+      eventName: GameEvent.POWER_UP_PICK_PROPERTY,
+      body: this.getEnemyTilesId(player.playerId),
+    };
+  }
+
+  public async onPowerUpPostPickProperty(
+    propertyId: string
+  ): Promise<GameEventPacket<null>> {
+    this.board.tiles.forEach((x) => {
+      const tile: ITile = x;
+      const tileId: string = x as string;
+      if (tileId === propertyId) {
+        tile.multiplier = 1;
+      }
+    });
+    return { eventName: GameEvent.END_TURN };
+  }
 
   /**
    * Used when the pawn ends the turn/ran out of time.
