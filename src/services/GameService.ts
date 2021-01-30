@@ -84,6 +84,13 @@ export class GameService {
       (this.pawnList[this.turn].position + value) % this.board.tiles.length;
   }
 
+  public movePawnToPosition(position: number): void {
+    if (position < 0 || position >= this.board.tiles.length) {
+    }
+
+    this.pawnList[this.turn].position = position;
+  }
+
   /**
    * Finds the first tile which holds the tile type and move the pawn there.
    */
@@ -178,7 +185,7 @@ export class GameService {
       case TileType.START:
         return { eventName: GameEvent.START_TILE };
       case TileType.JAIL:
-        return { eventName: GameEvent.PRISON_TILE };
+        return { eventName: GameEvent.JAIL_TILE };
       case TileType.PARKING:
         return { eventName: GameEvent.FREE_PARKING_TILE };
       case TileType.PROPERTY:
@@ -196,10 +203,12 @@ export class GameService {
   }
 
   /**
-   * Used when the pawn lands on a prison tile
+   * Used when the pawn lands on a prison tile.
    */
   public onLandPrison(): GameEventPacket<null> {
     const currentPawn: Pawn = this.pawnList[this.turn];
+    currentPawn.isPrisoner = true;
+
     if (currentPawn.prisonImmunity > 0) {
       currentPawn.prisonImmunity--;
       currentPawn.isPrisoner = false;
@@ -210,8 +219,21 @@ export class GameService {
   /**
    * Used when the pawn lands on a free parking tile.
    */
-  public onLandFreeParking(): GameEventPacket<null> {
-    return { eventName: GameEvent.FREE_PARKING_PICK_TILE };
+  public onLandFreeParking(): GameEventPacket<string[]> {
+    return {
+      eventName: GameEvent.FREE_PARKING_PICK_TILE,
+      body: (this.board.tiles as ITile[]).map(
+        (tile: ITile) => tile._id as string
+      ) as string[],
+    };
+  }
+
+  /**
+   * Used when the pawn picks a tile from the free parking tile.
+   */
+  public onFreeParkingPickTile(position: number): GameEventPacket<null> {
+    this.movePawnToPosition(position);
+    return { eventName: GameEvent.END_TURN };
   }
 
   /**
@@ -238,6 +260,10 @@ export class GameService {
     return { eventName: GameEvent.PROBLEM, body: problem };
   }
 
+  /**
+   * Used when the pawn answers the problem given.
+   * @param answer the answer given to the system
+   */
   public async onAnswerProblem(answer: number): Promise<GameEventPacket<null>> {
     const currentProblem = await this.getCurrentProblem();
     const isCorrect = answer === currentProblem.answer;
@@ -248,15 +274,24 @@ export class GameService {
     }
   }
 
+  /**
+   * Used when the pawn gives the wrong answer.
+   */
   public onWrongAnswer(): GameEventPacket<null> {
     return { eventName: GameEvent.END_TURN };
   }
 
+  /**
+   * Used when the pawn answers correctly.
+   */
   public onCorrectAnswer(): GameEventPacket<null> {
     this.addPoints(this.turn, GameConfig.CORRECT_ANSWER_POINTS);
     return { eventName: GameEvent.END_TURN };
   }
 
+  /**
+   * Used when the pawn lands on a power up tile.
+   */
   public onLandPowerUp(): GameEventPacket<null> {
     switch (this.getRandomPowerUp()) {
       case PowerUp.ADD_POINTS:
@@ -302,11 +337,15 @@ export class GameService {
   // }
 
   /**
-   * Used when the pawn ends the turn/ran out of time.
+   * Used when the pawn ends the turn/ran out of time. If pawn is imprisoned, end turn immediately!
    */
   public onEndTurn(): GameEventPacket<null> {
     this.changeTurn();
-    return { eventName: GameEvent.START_TURN };
+    return {
+      eventName: this.pawnList[this.turn].isPrisoner
+        ? GameEvent.END_TURN
+        : GameEvent.START_TURN,
+    };
   }
 
   // TODO: implement check game finished

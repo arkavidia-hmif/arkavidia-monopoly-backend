@@ -20,7 +20,7 @@ export const GameEvent = {
   CORRECT_ANSWER: "GAME_correctAnswer",
   WRONG_ANSWER: "GAME_wrongAnswer",
 
-  PRISON_TILE: "GAME_prisonTile",
+  JAIL_TILE: "GAME_prisonTile",
 
   POWER_UP_TILE: "GAME_powerUpTile",
   POWER_UP_GET_ADD_POINTS: "GAME_powerUpGetAdd",
