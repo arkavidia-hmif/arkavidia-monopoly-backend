@@ -122,7 +122,7 @@ export class GameController {
     }
   }
 
-  @OnMessage(GameEvent.PRISON_TILE)
+  @OnMessage(GameEvent.JAIL_TILE)
   public onLandPrison(
     @SocketIO() socket: Server,
     @SocketId() playerId: string
