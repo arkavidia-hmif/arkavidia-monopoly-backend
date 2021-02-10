@@ -23,13 +23,14 @@ export class LobbyController {
   }
 
   @OnDisconnect()
-  public async disconnect(): Promise<void> {
+  @EmitOnSuccess(LobbyEvent.GET_PLAYERS_IN_LOBBY)
+  public async disconnect(@SocketId() socketId: string): Promise<void> {
     // FIXME: kick player maybe?
+    this.gameService.removePawn(socketId);
     console.info("Client disconnected");
   }
 
   @OnMessage(LobbyEvent.START)
-  // @EmitOnSuccess(LobbyEvent.GAME_STARTED)
   public startGame(
     @MessageBody() boardId: string,
     @SocketIO() socket: Socket
@@ -39,10 +40,25 @@ export class LobbyController {
     });
   }
 
+  @OnMessage(LobbyEvent.GET_PLAYERS_IN_LOBBY)
+  public getPlayersInLobby(@SocketIO() socket: Socket): void {
+    socket.emit(
+      LobbyEvent.GET_PLAYERS_IN_LOBBY,
+      this.gameService.getPawnList()
+    );
+    // return this.gameService.getPawnList();
+  }
+
   @OnMessage(LobbyEvent.ADD_PLAYER)
-  @EmitOnSuccess(LobbyEvent.GET_PLAYERS_IN_LOBBY)
-  public addPlayer(@SocketId() socketId: string): Pawn[] {
-    this.gameService.addPawn(socketId);
-    return this.gameService.getPawnList();
+  public addPlayer(
+    @SocketIO() socket: Socket,
+    @SocketId() socketId: string,
+    @MessageBody() playerName: string
+  ): void {
+    this.gameService.addPawn(socketId, playerName);
+    socket.emit(
+      LobbyEvent.GET_PLAYERS_IN_LOBBY,
+      this.gameService.getPawnList()
+    );
   }
 }

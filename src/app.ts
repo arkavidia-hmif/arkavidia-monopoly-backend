@@ -22,7 +22,9 @@ const server = http.createServer(app);
 export const io = new socketio.Server(server);
 
 useExpressServer(app, {
-  cors: true,
+  cors: {
+    origin: ["https://monopoly.arkavidia.com", "http://localhost"],
+  },
   routePrefix: "/api",
   controllers: [__dirname + "/controllers/api/*.ts"],
   classTransformer: false,

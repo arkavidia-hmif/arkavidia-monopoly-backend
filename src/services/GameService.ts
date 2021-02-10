@@ -1,5 +1,5 @@
 import { IBoard } from "@/models/Board";
-import { GameEventPacket, Pawn, PowerUp } from "@/models/Game";
+import { GameEventPacket, Pawn, PawnColor, PowerUp } from "@/models/Game";
 import { ITile, TileType } from "@/models/Tile";
 import Container, { Service } from "typedi";
 
@@ -8,6 +8,7 @@ import { TileService } from "./TileService";
 import { GameEvent } from "@/events/GameEvent";
 import { GameConfig } from "@/config/GameConfig";
 import { IProblem } from "@/models/Problem";
+import { randomBytes } from "crypto";
 
 @Service()
 export class GameService {
@@ -110,11 +111,13 @@ export class GameService {
 
   /**
    * Add new pawn from player ID
-   * @param playerId add new pawn from player ID
+   * @param playerId Player ID that is going to be added
    */
-  public addPawn(playerId: string): void {
+  public addPawn(playerId: string, playerName: string): void {
     this.pawnList.push({
       playerId,
+      playerName,
+      color: PawnColor[Math.floor(Math.random() * PawnColor.length)],
       position: 0,
       points: 0,
       property: [],
@@ -123,8 +126,12 @@ export class GameService {
     });
   }
 
+  /**
+   * Remove pawn from player list
+   * @param playerId Player ID that is going to be removed
+   */
   public removePawn(playerId: string): void {
-    this.pawnList.filter((pawn) => pawn.playerId != playerId);
+    this.pawnList.filter((pawn) => pawn.playerId !== playerId);
   }
 
   /**
