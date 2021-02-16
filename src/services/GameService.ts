@@ -8,7 +8,6 @@ import { TileService } from "./TileService";
 import { GameEvent } from "@/events/GameEvent";
 import { GameConfig } from "@/config/GameConfig";
 import { IProblem } from "@/models/Problem";
-import { randomBytes } from "crypto";
 
 @Service()
 export class GameService {
@@ -131,7 +130,8 @@ export class GameService {
    * @param playerId Player ID that is going to be removed
    */
   public removePawn(playerId: string): void {
-    this.pawnList.filter((pawn) => pawn.playerId !== playerId);
+    console.log(playerId);
+    this.pawnList = this.pawnList.filter((pawn) => pawn.playerId !== playerId);
   }
 
   /**
