@@ -1,4 +1,6 @@
 export const GameEvent = {
+  PAWN_LIST: "GAME_pawnList",
+
   // Turn related events
   START_TURN: "GAME_startTurn",
   END_TURN: "GAME_endTurn",

@@ -17,8 +17,8 @@ export class LobbyController {
   constructor(private gameService: GameService) {}
 
   @OnConnect()
-  public async connection(): Promise<void> {
-    console.info("Client connected");
+  public async connection(@SocketId() socketId: string): Promise<void> {
+    console.info(`ℹ Client with id ${socketId} connected`);
   }
 
   @OnDisconnect()
@@ -27,6 +27,7 @@ export class LobbyController {
     @SocketId() socketId: string
   ): void {
     this.gameService.removePawn(socketId);
+    console.info(`ℹ Client with id ${socketId} disconnected`);
     io.emit(LobbyEvent.GET_PLAYERS_IN_LOBBY, this.gameService.getPawnList());
   }
 
