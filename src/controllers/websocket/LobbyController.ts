@@ -1,5 +1,4 @@
 import { LobbyEvent } from "@/events/LobbyEvent";
-import { Pawn } from "@/models/Game";
 import { GameService } from "@/services/GameService";
 import {
   EmitOnSuccess,
@@ -23,42 +22,38 @@ export class LobbyController {
   }
 
   @OnDisconnect()
-  @EmitOnSuccess(LobbyEvent.GET_PLAYERS_IN_LOBBY)
-  public async disconnect(@SocketId() socketId: string): Promise<void> {
-    // FIXME: kick player maybe?
+  public disconnect(
+    @SocketIO() io: Socket,
+    @SocketId() socketId: string
+  ): void {
     this.gameService.removePawn(socketId);
-    console.info("Client disconnected");
+    io.emit(LobbyEvent.GET_PLAYERS_IN_LOBBY, this.gameService.getPawnList());
   }
 
   @OnMessage(LobbyEvent.START)
   public startGame(
     @MessageBody() boardId: string,
-    @SocketIO() socket: Socket
+    @SocketIO() io: Socket
   ): void {
     this.gameService.initializeGame(boardId).then(() => {
-      socket.emit(LobbyEvent.GAME_STARTED, this.gameService.getBoard());
+      console.log(this.gameService.getBoard());
+      io.emit(LobbyEvent.GAME_STARTED, this.gameService.getBoard());
     });
   }
 
   @OnMessage(LobbyEvent.GET_PLAYERS_IN_LOBBY)
-  public getPlayersInLobby(@SocketIO() socket: Socket): void {
-    socket.emit(
-      LobbyEvent.GET_PLAYERS_IN_LOBBY,
-      this.gameService.getPawnList()
-    );
+  public getPlayersInLobby(@SocketIO() io: Socket): void {
+    io.emit(LobbyEvent.GET_PLAYERS_IN_LOBBY, this.gameService.getPawnList());
     // return this.gameService.getPawnList();
   }
 
   @OnMessage(LobbyEvent.ADD_PLAYER)
   public addPlayer(
-    @SocketIO() socket: Socket,
+    @SocketIO() io: Socket,
     @SocketId() socketId: string,
     @MessageBody() playerName: string
   ): void {
     this.gameService.addPawn(socketId, playerName);
-    socket.emit(
-      LobbyEvent.GET_PLAYERS_IN_LOBBY,
-      this.gameService.getPawnList()
-    );
+    io.emit(LobbyEvent.GET_PLAYERS_IN_LOBBY, this.gameService.getPawnList());
   }
 }

@@ -19,11 +19,15 @@ useSocketContainer(Container);
 
 export const app = express();
 const server = http.createServer(app);
-export const io = new socketio.Server(server);
+export const io = new socketio.Server(server, {
+  cors: {
+    origin: ["https://monopoly.arkavidia.com", "http://localhost:3000"],
+  },
+});
 
 useExpressServer(app, {
   cors: {
-    origin: ["https://monopoly.arkavidia.com", "http://localhost"],
+    origin: ["https://monopoly.arkavidia.com", "http://localhost:3000"],
   },
   routePrefix: "/api",
   controllers: [__dirname + "/controllers/api/*.ts"],
