@@ -1,6 +1,9 @@
 import { GameEvent } from "@/events/GameEvent";
+import { Pawn } from "@/models/Game";
 import { GameService } from "@/services/GameService";
 import {
+  EmitOnFail,
+  EmitOnSuccess,
   MessageBody,
   OnMessage,
   SocketController,
@@ -13,18 +16,25 @@ import { Server } from "socket.io";
 export class GameController {
   constructor(private gameService: GameService) {}
 
+  @OnMessage(GameEvent.PAWN_LIST)
+  // @EmitOnSuccess(GameEvent.PAWN_LIST)
+  public onRequestPawnList(@SocketIO() io: Server): void {
+    io.emit(GameEvent.PAWN_LIST, this.gameService.getPawnList());
+    // return this.gameService.getPawnList();
+  }
+
   @OnMessage(GameEvent.START_TURN)
+  @EmitOnSuccess(GameEvent.MOVE)
+  @EmitOnFail(GameEvent.INVALID_TURN)
   public onStartTurn(
     @SocketIO() io: Server,
     @SocketId() playerId: string
-  ): void {
-    if (this.gameService.isPlaying(playerId)) {
-      const [dice1, dice2] = this.gameService.rollTwoDice();
-      io.emit(GameEvent.MOVE, dice1 + dice2);
-    } else {
-      io.emit(GameEvent.INVALID_TURN);
-    }
-    // return;
+  ): number {
+    io.emit(GameEvent.PAWN_LIST, this.gameService.getPawnList());
+    if (!this.gameService.isPlaying(playerId)) throw new Error("Invalid turn!");
+
+    const [dice1, dice2] = this.gameService.rollTwoDice();
+    return dice1 + dice2;
   }
 
   @OnMessage(GameEvent.MOVE)
@@ -33,12 +43,12 @@ export class GameController {
     @SocketId() playerId: string,
     @MessageBody() tilesMoved: number
   ): Promise<void> {
-    if (this.gameService.isPlaying(playerId)) {
-      const gameEvent = await this.gameService.onMove(tilesMoved);
-      io.emit(gameEvent.eventName);
-    } else {
-      io.emit(GameEvent.INVALID_TURN);
-    }
+    io.emit(GameEvent.PAWN_LIST, this.gameService.getPawnList());
+
+    if (!this.gameService.isPlaying(playerId)) throw new Error("Invalid turn!");
+
+    const gameEvent = await this.gameService.onMove(tilesMoved);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.END_TURN)

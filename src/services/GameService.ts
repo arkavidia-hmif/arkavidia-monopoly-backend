@@ -29,6 +29,7 @@ export class GameService {
    * Gets pawn list.
    */
   public getPawnList(): Pawn[] {
+    console.log(this.pawnList);
     return this.pawnList;
   }
 
@@ -130,7 +131,6 @@ export class GameService {
    * @param playerId Player ID that is going to be removed
    */
   public removePawn(playerId: string): void {
-    console.log(playerId);
     this.pawnList = this.pawnList.filter((pawn) => pawn.playerId !== playerId);
   }
 
