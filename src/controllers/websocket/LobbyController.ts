@@ -37,7 +37,6 @@ export class LobbyController {
     @SocketIO() io: Socket
   ): void {
     this.gameService.initializeGame(boardId).then(() => {
-      console.log(this.gameService.getBoard());
       io.emit(LobbyEvent.GAME_STARTED, this.gameService.getBoard());
     });
   }

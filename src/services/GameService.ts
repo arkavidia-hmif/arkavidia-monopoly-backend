@@ -29,7 +29,6 @@ export class GameService {
    * Gets pawn list.
    */
   public getPawnList(): Pawn[] {
-    console.log(this.pawnList);
     return this.pawnList;
   }
 
@@ -51,7 +50,6 @@ export class GameService {
    * Check current turn. If player ID on the current turn is the same as supplied, will return true. Otherwise, false.
    */
   public isPlaying(playerId: string): boolean {
-    // console.log(this.turn);
     return this.pawnList[this.turn].playerId === playerId;
   }
 
@@ -191,7 +189,7 @@ export class GameService {
       case TileType.PROPERTY:
         return { eventName: GameEvent.PROPERTY_TILE };
       case TileType.POWER_UP:
-        return { eventName: GameEvent.POWER_UP_GET_ADD_POINTS };
+        return { eventName: GameEvent.POWER_UP_TILE };
       default:
         return { eventName: GameEvent.END_TURN };
     }
