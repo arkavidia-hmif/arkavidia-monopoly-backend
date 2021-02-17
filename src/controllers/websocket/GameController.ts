@@ -1,9 +1,7 @@
 import { GameEvent } from "@/events/GameEvent";
-import { Pawn } from "@/models/Game";
 import { GameService } from "@/services/GameService";
 import {
   EmitOnFail,
-  EmitOnSuccess,
   MessageBody,
   OnMessage,
   SocketController,
@@ -27,15 +25,14 @@ export class GameController {
    * @param playerId Socket ID for the player ID
    */
   @OnMessage(GameEvent.START_TURN)
-  @EmitOnSuccess(GameEvent.MOVE)
   @EmitOnFail(GameEvent.INVALID_TURN)
   public onStartTurn(
     @SocketIO() io: Server,
     @SocketId() playerId: string
-  ): number {
+  ): void {
     this.verifyTurn(io, playerId);
     const [dice1, dice2] = this.gameService.rollTwoDice();
-    return dice1 + dice2;
+    io.to(playerId).emit(GameEvent.MOVE, dice1 + dice2);
   }
 
   /**
@@ -66,7 +63,7 @@ export class GameController {
   public onEndTurn(@SocketIO() io: Server, @SocketId() playerId: string): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onEndTurn();
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   /**
@@ -82,7 +79,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onLandProperty();
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.GIVE_PROBLEM)
@@ -93,7 +90,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     this.gameService.onGiveProblem().then((gameEvent) => {
-      io.emit(gameEvent.eventName, gameEvent.body);
+      io.to(playerId).emit(gameEvent.eventName, gameEvent.body);
     });
   }
 
@@ -106,7 +103,7 @@ export class GameController {
   ): Promise<void> {
     this.verifyTurn(io, playerId);
     const gameEvent = await this.gameService.onAnswerProblem(answer);
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.CORRECT_ANSWER)
