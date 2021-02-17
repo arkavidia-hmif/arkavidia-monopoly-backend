@@ -114,7 +114,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onCorrectAnswer();
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.WRONG_ANSWER)
@@ -125,7 +125,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onWrongAnswer();
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.PRISON_TILE)
@@ -136,7 +136,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onLandPrison();
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.POWER_UP_TILE)
@@ -147,7 +147,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onLandPowerUp();
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.POWER_UP_GET_ADD_POINTS)
@@ -158,7 +158,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onPowerUpAddPoints();
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.POWER_UP_GET_REDUCE_POINTS)
@@ -169,7 +169,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onPowerUpReducePoints();
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.POWER_UP_PICK_PLAYER)
@@ -181,7 +181,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onPowerUpPickPlayer(playerIndex);
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   @OnMessage(GameEvent.POWER_UP_GET_DISABLE_MULTIPLIER)
@@ -192,7 +192,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onPowerUpDisableMultiplier();
-    io.emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName);
   }
 
   // @OnMessage(GameEvent.POWER_UP_PICK_PROPERTY)
