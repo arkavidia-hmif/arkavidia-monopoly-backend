@@ -33,6 +33,18 @@ export class GameService {
   }
 
   /**
+   *  Swap pawn position in list
+   */
+  public swapPawn(index1: number, index2: number): void {
+    let pawn1 = this.pawnList[index1];
+    let pawn2 = this.pawnList[index2];
+
+    const tmp = pawn1;
+    pawn1 = pawn2;
+    pawn2 = tmp;
+  }
+
+  /**
    * Gets the current board.
    */
   public getBoard(): IBoard {
