@@ -1,7 +1,6 @@
 import { LobbyEvent } from "@/events/LobbyEvent";
 import { GameService } from "@/services/GameService";
 import {
-  EmitOnSuccess,
   MessageBody,
   OnConnect,
   OnDisconnect,
