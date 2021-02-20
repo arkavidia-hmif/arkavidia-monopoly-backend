@@ -1,3 +1,4 @@
+import { GameEvent } from "@/events/GameEvent";
 import { LobbyEvent } from "@/events/LobbyEvent";
 import { GameService } from "@/services/GameService";
 import {
@@ -49,5 +50,14 @@ export class AdminController {
     this.gameService.initializeGame(boardId).then(() => {
       io.emit(LobbyEvent.GAME_STARTED, this.gameService.getBoard());
     });
+  }
+
+  /**
+   * Force change turn from admin.
+   * @param io SocketIO instance
+   */
+  @OnMessage(GameEvent.FORCE_SKIP_TURN)
+  public forceChangeTurn(@SocketIO() io: Socket): void {
+    io.emit(GameEvent.END_TURN);
   }
 }

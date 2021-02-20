@@ -31,4 +31,6 @@ export const GameEvent = {
   POWER_UP_GET_DISABLE_MULTIPLIER: "GAME_powerUpGetDisableMultiplier",
   POWER_UP_PICK_PROPERTY: "GAME_powerUpPickPropertyToDisable",
   POWER_UP_PICK_PLAYER: "GAME_powerUpPickPlayerToRemove",
+
+  FORCE_SKIP_TURN: "GAME_forceSkipTurn",
 };
