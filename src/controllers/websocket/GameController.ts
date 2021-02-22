@@ -14,6 +14,11 @@ import { Server } from "socket.io";
 export class GameController {
   constructor(private gameService: GameService) {}
 
+  /**
+   * Verify player turn by their player ID
+   * @param io SocketIO instance
+   * @param playerId Socket ID as player ID
+   */
   private verifyTurn(io: Server, playerId: string) {
     io.emit(GameEvent.PAWN_LIST, this.gameService.getPawnList());
     if (!this.gameService.isPlaying(playerId)) throw new Error("Invalid turn!");
@@ -67,7 +72,7 @@ export class GameController {
   }
 
   /**
-   * On player landed on property tile,
+   * On player landed on property tile, give them the problem
    * @param io SocketIO instance
    * @param playerId Socket ID for the player ID
    */
@@ -82,6 +87,11 @@ export class GameController {
     io.to(playerId).emit(gameEvent.eventName);
   }
 
+  /**
+   * On request to give problem, return back problem
+   * @param io SocketIO instance
+   * @param playerId Socket ID for the player ID
+   */
   @OnMessage(GameEvent.GIVE_PROBLEM)
   @EmitOnFail(GameEvent.INVALID_TURN)
   public onGiveProblem(
@@ -94,6 +104,12 @@ export class GameController {
     });
   }
 
+  /**
+   * On answer prblem, return verdict
+   * @param io SocketIO instance
+   * @param playerId Socket ID as player ID
+   * @param answer The answer given from the player
+   */
   @OnMessage(GameEvent.ANSWER_PROBLEM)
   @EmitOnFail(GameEvent.INVALID_TURN)
   public async onAnswerProblem(
@@ -106,6 +122,11 @@ export class GameController {
     io.to(playerId).emit(gameEvent.eventName);
   }
 
+  /**
+   * On correct answer, add
+   * @param io SocketIO instance
+   * @param playerId Sokcet ID as player ID
+   */
   @OnMessage(GameEvent.CORRECT_ANSWER)
   @EmitOnFail(GameEvent.INVALID_TURN)
   public onCorrectAnswer(
@@ -139,6 +160,11 @@ export class GameController {
     io.to(playerId).emit(gameEvent.eventName);
   }
 
+  /**
+   * On land power up tile, return random power up
+   * @param io SocketIO instance
+   * @param playerId Socket ID as player ID
+   */
   @OnMessage(GameEvent.POWER_UP_TILE)
   @EmitOnFail(GameEvent.INVALID_TURN)
   public onLandPowerUp(
@@ -150,6 +176,11 @@ export class GameController {
     io.to(playerId).emit(gameEvent.eventName);
   }
 
+  /**
+   * On get power up to add points, add points
+   * @param io SocketIO instance
+   * @param playerId Socket ID as player ID
+   */
   @OnMessage(GameEvent.POWER_UP_GET_ADD_POINTS)
   @EmitOnFail(GameEvent.INVALID_TURN)
   public onPowerUpAddPoints(
@@ -195,17 +226,28 @@ export class GameController {
     io.to(playerId).emit(gameEvent.eventName);
   }
 
-  // @OnMessage(GameEvent.POWER_UP_PICK_PROPERTY)
-  // public onPowerUpPickProperty(
-  //   @SocketIO() io: Server,
-  //   @SocketId() playerId: string,
-  //   @MessageBody() propertyIndex: number
-  // ): void {
-  //   if (this.gameService.isPlaying(playerId)) {
-  //     const gameEvent = this.gameService.onPowerUpPickProperty(propertyIndex);
-  //     socket.emit(gameEvent.eventName);
-  //   } else {
-  //     socket.emit(GameEvent.INVALID_TURN);
-  //   }
-  // }
+  @OnMessage(GameEvent.POWER_UP_PRE_PICK_PROPERTY)
+  @EmitOnFail(GameEvent.INVALID_TURN)
+  public onPowerUpPickProperty(
+    @SocketIO() io: Server,
+    @SocketId() playerId: string
+  ): void {
+    this.verifyTurn(io, playerId);
+    const gameEvent = this.gameService.onPowerUpPrePickProperty();
+    io.to(playerId).emit(gameEvent.eventName, gameEvent.body);
+  }
+
+  @OnMessage(GameEvent.POWER_UP_POST_PICK_PROPERTY)
+  @EmitOnFail(GameEvent.INVALID_TURN)
+  public async onPowerUpPostPickProperty(
+    @SocketIO() io: Server,
+    @SocketId() playerId: string,
+    @MessageBody() propertyId: string
+  ): Promise<void> {
+    this.verifyTurn(io, playerId);
+    const gameEvent = await this.gameService.onPowerUpPostPickProperty(
+      propertyId
+    );
+    io.to(playerId).emit(gameEvent.eventName);
+  }
 }

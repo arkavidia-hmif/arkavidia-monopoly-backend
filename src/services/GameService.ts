@@ -194,6 +194,19 @@ export class GameService {
   // -=-=-=-=-= EVENT RELATED -=-=-=-=-=
 
   /**
+   * On start turn, this is the chcker.
+   */
+  public onStartTurn(): GameEventPacket<null | number> {
+    if (this.pawnList[this.turn].isPrisoner) {
+      this.pawnList[this.turn].isPrisoner = false;
+      return { eventName: GameEvent.END_TURN };
+    } else {
+      const [dice1, dice2] = this.rollTwoDice();
+      return { eventName: GameEvent.MOVE, body: dice1 + dice2 };
+    }
+  }
+
+  /**
    * Used when the pawn is going to be moved.
    * @param dice How many tiles move forward
    */
@@ -219,7 +232,9 @@ export class GameService {
     }
   }
 
-  // TODO: fix pass by start
+  /**
+   * Used when the pawn lands on the start tile
+   */
   public onLandStart(): GameEventPacket<null> {
     return { eventName: GameEvent.END_TURN };
   }
@@ -283,6 +298,7 @@ export class GameService {
 
   public onCorrectAnswer(): GameEventPacket<null> {
     this.modifyPoints(this.turn, GameConfig.CORRECT_ANSWER_POINTS);
+    this.pawnList[this.turn].property.push(this.getCurrentTileId());
     return { eventName: GameEvent.END_TURN };
   }
 
@@ -311,7 +327,7 @@ export class GameService {
   }
 
   public onPowerUpDisableMultiplier(): GameEventPacket<null> {
-    return { eventName: GameEvent.POWER_UP_PICK_PROPERTY };
+    return { eventName: GameEvent.POWER_UP_PRE_PICK_PROPERTY };
   }
 
   public onPowerUpPrisonImmunity(): GameEventPacket<null> {
@@ -327,7 +343,7 @@ export class GameService {
   public onPowerUpPrePickProperty(): GameEventPacket<string[]> {
     const player: Pawn = this.pawnList[this.turn];
     return {
-      eventName: GameEvent.POWER_UP_PICK_PROPERTY,
+      eventName: GameEvent.POWER_UP_POST_PICK_PROPERTY,
       body: this.getEnemyTilesId(player.playerId),
     };
   }
