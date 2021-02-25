@@ -108,6 +108,14 @@ export class GameService {
   }
 
   /**
+   * Move the current pawn `value` count.
+   * @param value number of tiles moved
+   */
+  public movePawnToIndex(index: number): void {
+    this.pawnList[this.turn].position = index;
+  }
+
+  /**
    * Finds the first tile which holds the tile type and move the pawn there.
    */
   public movePawnToTileType(tileType: TileType): void {
@@ -196,10 +204,10 @@ export class GameService {
   /**
    * On start turn, this is the chcker.
    */
-  public onStartTurn(): GameEventPacket<null | number> {
+  public onStartTurn(): GameEventPacket<string | number> {
     if (this.pawnList[this.turn].isPrisoner) {
       this.pawnList[this.turn].isPrisoner = false;
-      return { eventName: GameEvent.END_TURN };
+      return { eventName: GameEvent.END_TURN, body: "Currently in prison!" };
     } else {
       const [dice1, dice2] = this.rollTwoDice();
       return { eventName: GameEvent.MOVE, body: dice1 + dice2 };
@@ -247,6 +255,8 @@ export class GameService {
     if (currentPawn.prisonImmunity > 0) {
       currentPawn.prisonImmunity--;
       currentPawn.isPrisoner = false;
+    } else {
+      currentPawn.isPrisoner = true;
     }
     return { eventName: GameEvent.END_TURN };
   }
@@ -254,8 +264,16 @@ export class GameService {
   /**
    * Used when the pawn lands on a free parking tile.
    */
-  public onLandFreeParking(): GameEventPacket<null> {
-    return { eventName: GameEvent.FREE_PARKING_PICK_TILE };
+  public onLandFreeParking(): GameEventPacket<ITile[]> {
+    return {
+      eventName: GameEvent.FREE_PARKING_PICK_TILE,
+      body: this.board.tiles as ITile[],
+    };
+  }
+
+  public onFreeParkingPickTile(index: number): GameEventPacket<null> {
+    this.movePawnToIndex(index);
+    return { eventName: GameEvent.END_TURN };
   }
 
   /**
