@@ -36,8 +36,8 @@ export class GameController {
     @SocketId() playerId: string
   ): void {
     this.verifyTurn(io, playerId);
-    const [dice1, dice2] = this.gameService.rollTwoDice();
-    io.to(playerId).emit(GameEvent.MOVE, dice1 + dice2);
+    const gameEvent = this.gameService.onStartTurn();
+    io.to(playerId).emit(gameEvent.eventName, gameEvent.body);
   }
 
   /**
@@ -68,7 +68,7 @@ export class GameController {
   public onEndTurn(@SocketIO() io: Server, @SocketId() playerId: string): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onEndTurn();
-    io.to(playerId).emit(gameEvent.eventName);
+    io.emit(gameEvent.eventName);
   }
 
   /**
@@ -100,7 +100,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     this.gameService.onGiveProblem().then((gameEvent) => {
-      io.to(playerId).emit(gameEvent.eventName, gameEvent.body);
+      io.emit(gameEvent.eventName, gameEvent.body);
     });
   }
 
@@ -200,7 +200,7 @@ export class GameController {
   ): void {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onPowerUpReducePoints();
-    io.to(playerId).emit(gameEvent.eventName);
+    io.to(playerId).emit(gameEvent.eventName, gameEvent.body);
   }
 
   @OnMessage(GameEvent.POWER_UP_PICK_PLAYER)
@@ -249,5 +249,28 @@ export class GameController {
       propertyId
     );
     io.to(playerId).emit(gameEvent.eventName);
+  }
+
+  @OnMessage(GameEvent.FREE_PARKING_TILE)
+  @EmitOnFail(GameEvent.INVALID_TURN)
+  public async onLandFreeParking(
+    @SocketIO() io: Server,
+    @SocketId() playerId: string
+  ): Promise<void> {
+    this.verifyTurn(io, playerId);
+    const gameEvent = this.gameService.onLandFreeParking();
+    io.to(playerId).emit(gameEvent.eventName, gameEvent.body);
+  }
+
+  @OnMessage(GameEvent.FREE_PARKING_PICK_TILE)
+  @EmitOnFail(GameEvent.INVALID_TURN)
+  public async onFreeParkingPickTile(
+    @SocketIO() io: Server,
+    @SocketId() playerId: string,
+    @MessageBody() tileIndex: number
+  ): Promise<void> {
+    this.verifyTurn(io, playerId);
+    const gameEvent = this.gameService.onFreeParkingPickTile(tileIndex);
+    io.to(playerId).emit(gameEvent.eventName, gameEvent.body);
   }
 }
