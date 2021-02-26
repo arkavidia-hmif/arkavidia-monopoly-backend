@@ -3,6 +3,7 @@ export interface Pawn {
   playerName: string;
   position: number;
   color: string;
+  totalPoints: number;
   points: number;
   property: string[];
   prisonImmunity: 0;

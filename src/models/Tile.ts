@@ -13,6 +13,7 @@ export enum TileType {
 export interface ITile extends Document {
   type: TileType;
   problem?: string | IProblem;
+  name?: string;
   price?: number;
   multiplier?: number;
   group?: string | null;
@@ -20,6 +21,7 @@ export interface ITile extends Document {
 
 export const TileSchema = new Schema<ITile>({
   type: { type: TileType, required: true },
+  name: { type: String },
   problem: { type: Schema.Types.ObjectId, ref: "problem" },
   price: { type: Number },
   multiplier: { type: Number },
