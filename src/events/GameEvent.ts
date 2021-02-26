@@ -34,4 +34,6 @@ export const GameEvent = {
   POWER_UP_PICK_PLAYER: "GAME_powerUpPickPlayerToRemove",
 
   FORCE_SKIP_TURN: "GAME_forceSkipTurn",
+
+  END_GAME: "GAME_endGame",
 };

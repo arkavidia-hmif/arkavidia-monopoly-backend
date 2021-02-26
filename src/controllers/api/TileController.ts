@@ -8,7 +8,7 @@ import {
   Put,
 } from "routing-controllers";
 import { TileService } from "@/services/TileService";
-import { IsEnum, IsNumber, IsString } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 import { TileType } from "@/models/Tile";
 import { IProblem } from "@/models/Problem";
 
@@ -18,6 +18,9 @@ export class TileBase {
 
   @IsString()
   problem?: string | IProblem;
+
+  @IsString()
+  name?: string;
 
   @IsNumber()
   price?: number;
@@ -36,6 +39,9 @@ export class CreateTileBody extends TileBase {
   @IsString()
   problem?: string | IProblem;
 
+  @IsString()
+  name?: string;
+
   @IsNumber()
   price?: number;
 
@@ -48,18 +54,27 @@ export class CreateTileBody extends TileBase {
 
 export class UpdateTileBody extends TileBase {
   @IsEnum(TileType)
+  @IsOptional()
   type?: TileType;
 
   @IsString()
-  problem?: string | IProblem;
+  @IsOptional()
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  problem?: string;
 
   @IsNumber()
+  @IsOptional()
   price?: number;
 
   @IsNumber()
+  @IsOptional()
   multiplier?: number;
 
   @IsString()
+  @IsOptional()
   group?: string;
 }
 

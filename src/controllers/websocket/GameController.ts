@@ -65,7 +65,10 @@ export class GameController {
    */
   @OnMessage(GameEvent.END_TURN)
   @EmitOnFail(GameEvent.INVALID_TURN)
-  public onEndTurn(@SocketIO() io: Server, @SocketId() playerId: string): void {
+  public async onEndTurn(
+    @SocketIO() io: Server,
+    @SocketId() playerId: string
+  ): Promise<void> {
     this.verifyTurn(io, playerId);
     const gameEvent = this.gameService.onEndTurn();
     io.emit(gameEvent.eventName);
@@ -129,12 +132,12 @@ export class GameController {
    */
   @OnMessage(GameEvent.CORRECT_ANSWER)
   @EmitOnFail(GameEvent.INVALID_TURN)
-  public onCorrectAnswer(
+  public async onCorrectAnswer(
     @SocketIO() io: Server,
     @SocketId() playerId: string
-  ): void {
+  ): Promise<void> {
     this.verifyTurn(io, playerId);
-    const gameEvent = this.gameService.onCorrectAnswer();
+    const gameEvent = await this.gameService.onCorrectAnswer();
     io.to(playerId).emit(gameEvent.eventName);
   }
 
@@ -183,12 +186,12 @@ export class GameController {
    */
   @OnMessage(GameEvent.POWER_UP_GET_ADD_POINTS)
   @EmitOnFail(GameEvent.INVALID_TURN)
-  public onPowerUpAddPoints(
+  public async onPowerUpAddPoints(
     @SocketIO() io: Server,
     @SocketId() playerId: string
-  ): void {
+  ): Promise<void> {
     this.verifyTurn(io, playerId);
-    const gameEvent = this.gameService.onPowerUpAddPoints();
+    const gameEvent = await this.gameService.onPowerUpAddPoints();
     io.to(playerId).emit(gameEvent.eventName);
   }
 
@@ -205,13 +208,13 @@ export class GameController {
 
   @OnMessage(GameEvent.POWER_UP_PICK_PLAYER)
   @EmitOnFail(GameEvent.INVALID_TURN)
-  public onPowerUpPickPlayer(
+  public async onPowerUpPickPlayer(
     @SocketIO() io: Server,
     @SocketId() playerId: string,
     @MessageBody() playerIndex: number
-  ): void {
+  ): Promise<void> {
     this.verifyTurn(io, playerId);
-    const gameEvent = this.gameService.onPowerUpPickPlayer(playerIndex);
+    const gameEvent = await this.gameService.onPowerUpPickPlayer(playerIndex);
     io.to(playerId).emit(gameEvent.eventName);
   }
 

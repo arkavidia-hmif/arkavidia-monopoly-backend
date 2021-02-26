@@ -137,6 +137,7 @@ export class GameService {
       playerName,
       color: PawnColor[Math.floor(Math.random() * PawnColor.length)],
       position: 0,
+      totalPoints: 0,
       points: 0,
       property: [],
       prisonImmunity: 0,
@@ -158,6 +159,15 @@ export class GameService {
    */
   public modifyPoints(playerIndex: number, value: number): void {
     this.pawnList[playerIndex].points += value;
+  }
+
+  /**
+   * Set points for a player
+   * @param playerIndex The player index
+   * @param value The points
+   */
+  public setTotalPoints(playerIndex: number, value: number): void {
+    this.pawnList[playerIndex].totalPoints = value;
   }
 
   /**
@@ -273,7 +283,23 @@ export class GameService {
 
   public onFreeParkingPickTile(index: number): GameEventPacket<null> {
     this.movePawnToIndex(index);
-    return { eventName: GameEvent.END_TURN };
+    const currentTile: ITile = this.board.tiles[
+      this.pawnList[this.turn].position
+    ] as ITile;
+    switch (currentTile.type) {
+      case TileType.START:
+        return { eventName: GameEvent.START_TILE };
+      case TileType.JAIL:
+        return { eventName: GameEvent.PRISON_TILE };
+      case TileType.PARKING:
+        return { eventName: GameEvent.FREE_PARKING_TILE };
+      case TileType.PROPERTY:
+        return { eventName: GameEvent.PROPERTY_TILE };
+      case TileType.POWER_UP:
+        return { eventName: GameEvent.POWER_UP_TILE };
+      default:
+        return { eventName: GameEvent.END_TURN };
+    }
   }
 
   /**
@@ -314,9 +340,13 @@ export class GameService {
     return { eventName: GameEvent.END_TURN };
   }
 
-  public onCorrectAnswer(): GameEventPacket<null> {
-    this.modifyPoints(this.turn, GameConfig.CORRECT_ANSWER_POINTS);
+  public async onCorrectAnswer(): Promise<GameEventPacket<null>> {
+    // Add property to list
     this.pawnList[this.turn].property.push(this.getCurrentTileId());
+
+    const points = await this.calculatePropertyPoints(this.turn);
+    this.setTotalPoints(this.turn, points + this.pawnList[this.turn].points);
+
     return { eventName: GameEvent.END_TURN };
   }
 
@@ -335,8 +365,11 @@ export class GameService {
     }
   }
 
-  public onPowerUpAddPoints(): GameEventPacket<null> {
+  public async onPowerUpAddPoints(): Promise<GameEventPacket<null>> {
     this.modifyPoints(this.turn, GameConfig.POWER_UP_POINTS);
+    const points = await this.calculatePropertyPoints(this.turn);
+    this.setTotalPoints(this.turn, points + this.pawnList[this.turn].points);
+    console.log(this.pawnList);
     return { eventName: GameEvent.END_TURN };
   }
 
@@ -353,8 +386,14 @@ export class GameService {
     return { eventName: GameEvent.END_TURN };
   }
 
-  public onPowerUpPickPlayer(playerIndex: number): GameEventPacket<null> {
-    this.modifyPoints(playerIndex, -GameConfig.POWER_UP_POINTS);
+  public async onPowerUpPickPlayer(
+    playerIndex: number
+  ): Promise<GameEventPacket<null>> {
+    const points = await this.calculatePropertyPoints(playerIndex);
+    this.setTotalPoints(
+      playerIndex,
+      points + this.pawnList[playerIndex].points
+    );
     return { eventName: GameEvent.END_TURN };
   }
 
@@ -383,13 +422,61 @@ export class GameService {
    * Used when the pawn ends the turn/ran out of time.
    */
   public onEndTurn(): GameEventPacket<null> {
+    if (this.checkGameFinished()) {
+      return { eventName: GameEvent.END_GAME };
+    }
     this.changeTurn();
     return { eventName: GameEvent.START_TURN };
   }
 
-  // TODO: implement check game finished
-  public checkGameFinished(): void {
-    return;
+  public checkGameFinished(): boolean {
+    let propertyCount = 0;
+    for (const tile of this.board.tiles)
+      propertyCount += (tile as ITile).type === TileType.PROPERTY ? 1 : 0;
+    let pawnPropertyCount = 0;
+    for (const pawn of this.pawnList) pawnPropertyCount += pawn.property.length;
+
+    return propertyCount === pawnPropertyCount;
+  }
+
+  public groupTiles(): { [key: string]: ITile[] } {
+    const result = {};
+    for (let tile of this.board.tiles) {
+      tile = tile as ITile;
+      if (tile.type !== TileType.PROPERTY) continue;
+      result[tile.group] ??= [];
+      (result[tile.group] as ITile[]).push(tile);
+    }
+    return result;
+  }
+
+  public async calculatePropertyPoints(pawnIndex: number): Promise<number> {
+    let points = 0;
+
+    const grouped = this.groupTiles();
+    const groupedTilePlayer: { [key: string]: ITile[] } = {};
+    for (const propId of this.pawnList[pawnIndex].property) {
+      const prop = await Container.get(TileService).getOne(propId);
+      groupedTilePlayer[prop.group] ??= [];
+      (groupedTilePlayer[prop.group] as ITile[]).push(prop);
+    }
+
+    // Check per freq
+    for (const key in groupedTilePlayer) {
+      console.log(groupedTilePlayer);
+      if (grouped[key].length === groupedTilePlayer[key].length) {
+        const totalPoints = grouped[key]
+          .map((tile) => tile.price)
+          .reduce((total, tile) => total + tile);
+        points += grouped[key][0].multiplier * totalPoints;
+      } else {
+        for (const tile of groupedTilePlayer[key]) {
+          points += tile.price;
+        }
+      }
+    }
+
+    return points;
   }
 }
 
