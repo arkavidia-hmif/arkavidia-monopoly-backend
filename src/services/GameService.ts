@@ -354,8 +354,8 @@ export class GameService {
     switch (this.getRandomPowerUp()) {
       case PowerUp.ADD_POINTS:
         return { eventName: GameEvent.POWER_UP_GET_ADD_POINTS };
-      case PowerUp.DISABLE_MULTIPLIER:
-        return { eventName: GameEvent.POWER_UP_GET_DISABLE_MULTIPLIER };
+      // case PowerUp.DISABLE_MULTIPLIER:
+      //   return { eventName: GameEvent.POWER_UP_GET_DISABLE_MULTIPLIER };
       case PowerUp.PRISON_IMMUNITY:
         return { eventName: GameEvent.POWER_UP_GET_PRISON };
       case PowerUp.REDUCE_POINTS:
@@ -365,8 +365,10 @@ export class GameService {
     }
   }
 
-  public async onPowerUpAddPoints(): Promise<GameEventPacket<null>> {
-    this.modifyPoints(this.turn, GameConfig.POWER_UP_POINTS);
+  public async onPowerUpAddPoints(
+    added: number
+  ): Promise<GameEventPacket<null>> {
+    this.modifyPoints(this.turn, added);
     const points = await this.calculatePropertyPoints(this.turn);
     this.setTotalPoints(this.turn, points + this.pawnList[this.turn].points);
     console.log(this.pawnList);
@@ -387,13 +389,12 @@ export class GameService {
   }
 
   public async onPowerUpPickPlayer(
-    playerIndex: number
+    playerIndex: number,
+    reducedPoints: number
   ): Promise<GameEventPacket<null>> {
+    this.modifyPoints(playerIndex, -reducedPoints);
     const points = await this.calculatePropertyPoints(playerIndex);
-    this.setTotalPoints(
-      playerIndex,
-      points + this.pawnList[playerIndex].points
-    );
+    this.setTotalPoints(this.turn, points + this.pawnList[playerIndex].points);
     return { eventName: GameEvent.END_TURN };
   }
 

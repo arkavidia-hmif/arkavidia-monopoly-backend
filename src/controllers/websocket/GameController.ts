@@ -188,10 +188,12 @@ export class GameController {
   @EmitOnFail(GameEvent.INVALID_TURN)
   public async onPowerUpAddPoints(
     @SocketIO() io: Server,
-    @SocketId() playerId: string
+
+    @SocketId() playerId: string,
+    @MessageBody() points: number
   ): Promise<void> {
     this.verifyTurn(io, playerId);
-    const gameEvent = await this.gameService.onPowerUpAddPoints();
+    const gameEvent = await this.gameService.onPowerUpAddPoints(points);
     io.to(playerId).emit(gameEvent.eventName);
   }
 
@@ -211,10 +213,25 @@ export class GameController {
   public async onPowerUpPickPlayer(
     @SocketIO() io: Server,
     @SocketId() playerId: string,
-    @MessageBody() playerIndex: number
+    @MessageBody()
+    { playerIndex, points }: { playerIndex: number; points: number }
   ): Promise<void> {
     this.verifyTurn(io, playerId);
-    const gameEvent = await this.gameService.onPowerUpPickPlayer(playerIndex);
+    const gameEvent = await this.gameService.onPowerUpPickPlayer(
+      playerIndex,
+      points
+    );
+    io.to(playerId).emit(gameEvent.eventName);
+  }
+
+  @OnMessage(GameEvent.POWER_UP_GET_PRISON)
+  @EmitOnFail(GameEvent.INVALID_TURN)
+  public onPowerUpGetPrison(
+    @SocketIO() io: Server,
+    @SocketId() playerId: string
+  ): void {
+    this.verifyTurn(io, playerId);
+    const gameEvent = this.gameService.onPowerUpPrisonImmunity();
     io.to(playerId).emit(gameEvent.eventName);
   }
 
