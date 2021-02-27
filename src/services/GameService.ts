@@ -354,8 +354,8 @@ export class GameService {
     switch (this.getRandomPowerUp()) {
       case PowerUp.ADD_POINTS:
         return { eventName: GameEvent.POWER_UP_GET_ADD_POINTS };
-      case PowerUp.DISABLE_MULTIPLIER:
-        return { eventName: GameEvent.POWER_UP_GET_DISABLE_MULTIPLIER };
+      // case PowerUp.DISABLE_MULTIPLIER:
+      //   return { eventName: GameEvent.POWER_UP_GET_DISABLE_MULTIPLIER };
       case PowerUp.PRISON_IMMUNITY:
         return { eventName: GameEvent.POWER_UP_GET_PRISON };
       case PowerUp.REDUCE_POINTS:
@@ -392,7 +392,7 @@ export class GameService {
     playerIndex: number,
     reducedPoints: number
   ): Promise<GameEventPacket<null>> {
-    this.modifyPoints(playerIndex, reducedPoints);
+    this.modifyPoints(playerIndex, -reducedPoints);
     const points = await this.calculatePropertyPoints(playerIndex);
     this.setTotalPoints(this.turn, points + this.pawnList[playerIndex].points);
     return { eventName: GameEvent.END_TURN };
