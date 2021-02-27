@@ -393,7 +393,10 @@ export class GameService {
   ): Promise<GameEventPacket<null>> {
     this.modifyPoints(playerIndex, -reducedPoints);
     const points = await this.calculatePropertyPoints(playerIndex);
-    this.setTotalPoints(this.turn, points + this.pawnList[playerIndex].points);
+    this.setTotalPoints(
+      playerIndex,
+      points + this.pawnList[playerIndex].points
+    );
     return { eventName: GameEvent.END_TURN };
   }
 
