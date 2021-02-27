@@ -17,25 +17,29 @@ import * as socketio from "socket.io";
 useRoutingContainer(Container);
 useSocketContainer(Container);
 
+const CORSOrigin = [
+  "https://room1.monopoly.arkavidia.id",
+  "https://room2.monopoly.arkavidia.id",
+  "https://room3.monopoly.arkavidia.id",
+  "https://room4.monopoly.arkavidia.id",
+  "https://room5.monopoly.arkavidia.id",
+
+  "https://monopoly.arkavidia.id",
+  "https://staging.monopoly.arkavidia.id",
+  "http://localhost:3000",
+];
+
 export const app = express();
 const server = http.createServer(app);
 export const io = new socketio.Server(server, {
   cors: {
-    origin: [
-      "https://monopoly.arkavidia.id",
-      "https://staging.monopoly.arkavidia.id",
-      "http://localhost:3000",
-    ],
+    origin: CORSOrigin,
   },
 });
 
 useExpressServer(app, {
   cors: {
-    origin: [
-      "https://monopoly.arkavidia.id",
-      "https://staging.monopoly.arkavidia.id",
-      "http://localhost:3000",
-    ],
+    origin: CORSOrigin,
   },
   routePrefix: "/api",
   controllers: [__dirname + "/controllers/api/*.ts"],
