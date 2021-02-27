@@ -6,7 +6,6 @@ import Container, { Service } from "typedi";
 import { BoardService } from "./BoardService";
 import { TileService } from "./TileService";
 import { GameEvent } from "@/events/GameEvent";
-import { GameConfig } from "@/config/GameConfig";
 import { IProblem } from "@/models/Problem";
 
 @Service()
