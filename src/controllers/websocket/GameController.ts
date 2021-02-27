@@ -188,6 +188,7 @@ export class GameController {
   @EmitOnFail(GameEvent.INVALID_TURN)
   public async onPowerUpAddPoints(
     @SocketIO() io: Server,
+
     @SocketId() playerId: string,
     @MessageBody() points: number
   ): Promise<void> {
