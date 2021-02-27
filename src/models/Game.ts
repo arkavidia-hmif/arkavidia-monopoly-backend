@@ -10,7 +10,14 @@ export interface Pawn {
   isPrisoner: boolean;
 }
 
-export const PawnColor = ["#FF0000", "#00FF00", "#0000FF", "#00FFFF"];
+export const PawnColor = [
+  "#FFCCB6",
+  "#C6DBDA",
+  "#97C1A9",
+  "#55CBCD",
+  "#ABDEE6",
+  "#CBAACB",
+];
 
 export enum PowerUp {
   REDUCE_POINTS,
