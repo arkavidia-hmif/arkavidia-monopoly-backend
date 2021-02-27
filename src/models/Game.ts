@@ -15,7 +15,7 @@ export const PawnColor = ["#FF0000", "#00FF00", "#0000FF", "#00FFFF"];
 export enum PowerUp {
   REDUCE_POINTS,
   ADD_POINTS,
-  DISABLE_MULTIPLIER,
+  // DISABLE_MULTIPLIER,
   PRISON_IMMUNITY,
 }
 
