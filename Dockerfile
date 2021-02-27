@@ -1,11 +1,12 @@
-FROM mhart/alpine-node:latest
+FROM mhart/alpine-node:14
 
 WORKDIR /app
+
+COPY package.json yarn.lock /app/
+RUN "yarn"
 
 COPY . /app
 
 EXPOSE 3000
-
-RUN "yarn"
 
 CMD ["yarn", "start"]
